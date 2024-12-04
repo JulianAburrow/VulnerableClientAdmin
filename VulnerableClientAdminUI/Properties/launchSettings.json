@@ -1,0 +1,45 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "applicationRoot": "/DO_NOT_USE_THIS"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5234"
+    },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "applicationRoot": "/VulnerableClient"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7004;http://localhost:5234"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "applicationRoot": ""
+      }
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "environmentVariables": {
+      "ASPNETCORE_ENVIRONMENT": "Development",
+      "applicationRoot": "/VulnerableClient"
+    },
+    "iisExpress": {
+      "applicationUrl": "http://localhost:57954",
+      "applicationRoot": "",
+      "sslPort": 44340
+    }
+  }
+}

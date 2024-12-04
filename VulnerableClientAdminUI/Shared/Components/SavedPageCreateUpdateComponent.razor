@@ -1,0 +1,15 @@
+﻿<MudGrid>
+    <MudItem sm="12">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Title" @bind-Value="SavedPageDisplayModel.Title" AutoFocus OnlyValidateIfDirty="true" />
+                 <MudTextField Label="Url" @bind-Value="SavedPageDisplayModel.Url" />
+                 <MudTextField Label="Notes" Lines="3" @bind-Value="SavedPageDisplayModel.Notes" />
+                 <MudCheckBox Label="External" @bind-Checked="SavedPageDisplayModel.IsExternal" />
+             </MudCardContent>
+             <MudCardActions>
+                 <button type="submit" class="btn btn-primary">Submit</button>&nbsp;<a class="btn btn-primary" href="savedpages/index">Cancel</a>
+             </MudCardActions>
+         </MudCard>
+     </MudItem>
+ </MudGrid>

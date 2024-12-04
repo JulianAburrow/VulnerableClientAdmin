@@ -1,0 +1,16 @@
+﻿<MudGrid>
+    <MudItem sm="12">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Contact Method" @bind-Value="PreferredContactMethodDisplayModel.Method" AutoFocus OnlyValidateIfDirty="true" Disabled="@PreventEditing" />
+                <MudCheckBox Label="Active" @bind-Checked="PreferredContactMethodDisplayModel.MethodActive" />
+                <MudTextField Label="Description" @bind-Value="PreferredContactMethodDisplayModel.Description" Lines="3" />
+             </MudCardContent>
+             <MudCardActions>
+                 <button type="submit" class="btn btn-primary">Submit</button>
+                 &nbsp;
+                 <a class="btn btn-primary" href="preferredcontactmethods/index">Cancel</a>
+             </MudCardActions>
+         </MudCard>
+     </MudItem>
+ </MudGrid>

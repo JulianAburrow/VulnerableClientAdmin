@@ -1,0 +1,38 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Log In";
+}
+
+<h1>@ViewData["Title"] To Vulnerable Client Admin</h1>
+<div class="row" style="margin: 50px">
+    <div class="col-md-4">
+        <section>
+            <form id="account" method="post">
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-floating" style="margin:10px">
+                    <input asp-for="LoginInput.Email" class="form-control" aria-required="true" autofocus />
+                    <label asp-for="LoginInput.Email" class="form-label"></label>
+                    <span asp-validation-for="LoginInput.Email" class="text-danger"></span>
+                </div>
+                <div class="form-floating" style="margin:10px">
+                    <input asp-for="LoginInput.Password" class="form-control" aria-required="true" />
+                    <label asp-for="LoginInput.Password" class="form-label"></label>
+                    <span asp-validation-for="LoginInput.Password" class="text-danger"></span>
+                </div>
+                <div style="margin:10px">
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                    <br /><br />
+                    <a href="~/Identity/Account/Register" class="btn btn-lg btn-primary">Register</a>
+                    &nbsp;
+                    <a href="~/" class="btn btn-lg btn-primary">Cancel</a>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+<a href="~/Identity/Account/ForgotPassword">Forgot Password</a>
+
+<h4 style="color:red;font-weight:bold">@ViewData[CommonValues.ErrorMessage]</h4>

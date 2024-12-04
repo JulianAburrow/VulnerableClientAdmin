@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VulnerableClientAdminDataAccess", "VulnerableClientAdminDataAccess\VulnerableClientAdminDataAccess.csproj", "{D598725F-AFC2-4CBB-A325-B31FC68CEE46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VulnerableClientAdminUI", "VulnerableClientAdminUI\VulnerableClientAdminUI.csproj", "{A17AA726-9C5B-413D-B5F6-35921DFF408D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B74099FC-9D21-44B6-B478-6AE8764A7628}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{78B8E2AE-00D5-4686-9764-EC45C984F0F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VulnerableClientAdminTest", "VulnerableClientAdminTest\VulnerableClientAdminTest.csproj", "{BFB6D969-67E3-4277-A35E-56C2B9279EFC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{A518B963-C3CD-4737-9396-095760407F83}"
+	ProjectSection(SolutionItems) = preProject
+		Documents\Vulnerable Client Admin Architecture.docx = Documents\Vulnerable Client Admin Architecture.docx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DbScripts", "DbScripts", "{2EB460D3-1BAE-4DFB-942A-2306DE3042EB}"
+	ProjectSection(SolutionItems) = preProject
+		DbScript\CreateVCATables.sql = DbScript\CreateVCATables.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_T1|Any CPU = Debug_T1|Any CPU
+		Debug_T2|Any CPU = Debug_T2|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Debug_T1|Any CPU.ActiveCfg = Debug_T1|Any CPU
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Debug_T1|Any CPU.Build.0 = Debug_T1|Any CPU
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Debug_T2|Any CPU.ActiveCfg = Debug_T2|Any CPU
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Debug_T2|Any CPU.Build.0 = Debug_T2|Any CPU
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Debug_T1|Any CPU.ActiveCfg = Debug_T1|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Debug_T1|Any CPU.Build.0 = Debug_T1|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Debug_T2|Any CPU.ActiveCfg = Debug_T2|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Debug_T2|Any CPU.Build.0 = Debug_T2|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Debug_T1|Any CPU.ActiveCfg = Debug_T1|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Debug_T1|Any CPU.Build.0 = Debug_T1|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Debug_T2|Any CPU.ActiveCfg = Debug_T2|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Debug_T2|Any CPU.Build.0 = Debug_T2|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D598725F-AFC2-4CBB-A325-B31FC68CEE46} = {B74099FC-9D21-44B6-B478-6AE8764A7628}
+		{A17AA726-9C5B-413D-B5F6-35921DFF408D} = {B74099FC-9D21-44B6-B478-6AE8764A7628}
+		{BFB6D969-67E3-4277-A35E-56C2B9279EFC} = {78B8E2AE-00D5-4686-9764-EC45C984F0F5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1AC605BD-3057-4032-AED8-7589D135F135}
+	EndGlobalSection
+EndGlobal

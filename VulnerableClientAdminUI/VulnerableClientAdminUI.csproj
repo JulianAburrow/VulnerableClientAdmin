@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Configurations>Debug;Release;Debug_T1;Debug_T2</Configurations>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == '' Or '$(Configuration)' == 'Debug_T1'">
+		<EnvironmentName>T1Dev</EnvironmentName>
+		<OutputPath>bin\Debug</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == '' Or '$(Configuration)' == 'Debug_T2'">
+		<EnvironmentName>T2Dev</EnvironmentName>
+		<OutputPath>bin\Debug</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == '' Or '$(Configuration)' == 'Release'">
+		<EnvironmentName>Release</EnvironmentName>
+		<OutputPath>bin\Release</OutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!--<PackageReference Include="Exceptionless.AspNetCore" Version="6.0.4" />-->
+		<PackageReference Include="MudBlazor" Version="6.11.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\VulnerableClientAdminDataAccess\VulnerableClientAdminDataAccess.csproj" />
+	</ItemGroup>
+
+</Project>

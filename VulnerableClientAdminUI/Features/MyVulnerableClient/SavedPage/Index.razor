@@ -1,0 +1,68 @@
+﻿@page "/savedpages/index"
+@inherits SavedPageBasePageClass
+
+<PageTitle>Saved Pages</PageTitle>
+
+@if (SavedPages == null)
+{
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Saved Pages</MudAlert>
+    return;
+}
+
+<br />
+
+<a href="savedpage/create" class="btn btn-primary">Add new</a>
+
+<br />
+<br />
+
+<MudTable
+    Items="SavedPages"
+    Hover
+    FixedHeader="true"
+    Height="500">
+    <HeaderContent>
+        <MudTh title="Sort by Title">
+            <MudTableSortLabel SortBy="new Func<SavedPageModel, object>(x => x.Title)">
+                Title
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by Url">
+            <MudTableSortLabel SortBy="new Func<SavedPageModel, object>(x => x.Url)">
+                Url
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by External">
+            <MudTableSortLabel SortBy="new Func<SavedPageModel, object>(x => x.IsExternal)">
+                External
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Title</MudTd>
+         <MudTd>
+             @{
+                if (context.IsExternal)
+                {
+                    <a href="@context.Url" target="_blank">@context.Url</a>
+                }
+                else
+                {
+                    <a href="@context.Url">@context.Url</a>
+                }
+            }
+         </MudTd>
+         <MudTd>@context.IsExternal</MudTd>
+         <MudTd>
+             <a class="btn btn-primary" href="savedpage/view/@context.SavedPageId">View</a>
+             &nbsp;
+             <a class="btn btn-primary" href="savedpage/edit/@context.SavedPageId">Edit</a>
+             &nbsp;
+             <a class="btn btn-danger" href="savedpage/delete/@context.SavedPageId">Delete</a>
+         </MudTd>
+     </RowTemplate>
+     <PagerContent>
+         <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" />
+     </PagerContent>
+ </MudTable>

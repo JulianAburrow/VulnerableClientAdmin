@@ -1,0 +1,14 @@
+﻿<MudGrid>
+    <MudItem sm="12">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Requirement" @bind-Value="SpecialRequirementDisplayModel.Requirement" AutoFocus OnlyValidateIfDirty="true" Disabled="@PreventEditing" />
+                <MudCheckBox Label="Active" @bind-Checked="SpecialRequirementDisplayModel.RequirementActive" />
+                <MudTextField Label="Description" @bind-Value="SpecialRequirementDisplayModel.Description" Lines="3" />
+            </MudCardContent>
+            <MudCardActions>
+                <button type="submit" class="btn btn-primary">Submit</button>&nbsp;<a class="btn btn-primary" href="specialrequirements/index">Cancel</a>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+ </MudGrid>

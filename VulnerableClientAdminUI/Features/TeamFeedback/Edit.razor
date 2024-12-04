@@ -1,0 +1,33 @@
+﻿@page "/teamfeedback/edit/{TeamFeedbackId:int}"
+@inherits TeamFeedbackBasePageClass
+
+<PageTitle>Edit Team Feedback</PageTitle>
+
+@* <AuthorizeView Roles="@RoleNames.SuperUserOnly">
+    <Authorized> *@
+
+        @if (TeamFeedbackModel == null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Team Feedback</MudAlert>
+            return;
+        }
+
+        <EditForm Context="subcontext" Model="@TeamFeedbackDisplayModel" OnValidSubmit="UpdateTeamFeedback">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <MudGrid>
+                <MudItem sm="12">
+                    <MudCard>
+                        <TeamFeedbackCreateUpdateComponent TeamFeedbackDisplayModel="@TeamFeedbackDisplayModel" />
+                    </MudCard>
+                    <MudCardActions>
+                        <button type="submit" class="btn btn-primary">Submit</button>&nbsp;<a class="btn btn-primary" href="teamfeedbacks/@TeamFeedbackDisplayModel.VulnerabilityInformationId/index">Cancel</a>
+                    </MudCardActions>
+                </MudItem>
+            </MudGrid>
+
+        </EditForm>
+
+@*     </Authorized>
+</AuthorizeView> *@

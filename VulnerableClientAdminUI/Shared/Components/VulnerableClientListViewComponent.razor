@@ -1,0 +1,49 @@
+﻿<MudTable Items="Clients"
+    Hover
+    FixedHeader="true"
+    Height="500">
+    <HeaderContent>
+        <MudTh title="Sort by Title">
+            <MudTableSortLabel SortBy="new Func<VulnerableClientModel, object>(x => x.Title)">
+                Title
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by First Name">
+            <MudTableSortLabel SortBy="new Func<VulnerableClientModel, object>(x => x.FirstName)">
+                First Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by Surname">
+            <MudTableSortLabel SortBy="new Func<VulnerableClientModel, object>(x => x.Surname)">
+                Surname
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by Date of Birth">
+            <MudTableSortLabel SortBy="new Func<VulnerableClientModel, object>(x => x.DateOfBirth)">
+                Date of Birth
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Title</MudTd>
+        <MudTd>@context.FirstName</MudTd>
+        <MudTd>@context.Surname</MudTd>
+        <MudTd>@(context.DateOfBirth != null ? context.DateOfBirth.Value.ToString("dd/MM/yyyy") : "N/A")</MudTd>
+        <MudTd>
+            @if (context.VulnerabilityInformation != null)
+        {
+            <a class="btn btn-primary" href="vulnerabilityinformation/summary/@context.ContactId">Summary</a>
+            @:&nbsp;
+            <a class="btn btn-primary" href="vulnerabilityinformation/details/@context.ContactId">Details</a>
+        }
+        else
+        {
+            <a class="btn btn-danger" href="vulnerabilityinformation/create/@context.ContactId">Add Vulnerability Details</a>
+        }
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" />
+    </PagerContent>
+</MudTable>

@@ -1,0 +1,78 @@
+﻿@page "/sourcesofawareness/index"
+@inherits SourceOfAwarenessBasePageClass
+
+<PageTitle>Sources Of Awareness</PageTitle>
+
+@* <AuthorizeView Roles="@RoleNames.SuperUserOnly">
+    <Authorized> *@
+
+        @if (SourcesOfAwareness == null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Sources Of Awareness</MudAlert>
+            return;
+        }
+
+        <br />
+
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+
+            <MudTabPanel Text="Admin">
+
+                <a class="btn btn-primary" href="sourceofawareness/create">Add new</a>
+
+                <br />
+                <br />
+
+                <MudTable Items="SourcesOfAwareness"
+                    Hover
+                    FixedHeader="true"
+                    Height="500">
+                    <HeaderContent>
+                        <MudTh title="Sort by Source">
+                            <MudTableSortLabel SortBy="new Func<SourceOfAwarenessModel, object>(x => x.Source)">
+                                Source
+                            </MudTableSortLabel>
+                        </MudTh>
+                        <MudTh title="Sort by Active">
+                            <MudTableSortLabel SortBy="new Func<SourceOfAwarenessModel, object>(x => x.SourceActive)">
+                                Active
+                            </MudTableSortLabel>
+                         </MudTh>
+                         <MudTh title="Sort by Usage">
+                             <MudTableSortLabel SortBy="new Func<SourceOfAwarenessModel, object>(x => x.Vulnerabilities.Count)">
+                                 Usage
+                             </MudTableSortLabel>
+                         </MudTh>
+                         <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="subcontext">
+                        <MudTd title="@subcontext.Description">@subcontext.Source</MudTd>
+                        <MudTd>@subcontext.SourceActive</MudTd>
+                        <MudTd>@subcontext.Vulnerabilities.Count</MudTd>
+                        <MudTd>
+                            <a class="btn btn-primary" href="sourceofawareness/view/@subcontext.SourceOfAwarenessId">View</a>
+                            &nbsp;
+                            <a class="btn btn-primary" href="sourceofawareness/edit/@subcontext.SourceOfAwarenessId">Edit</a>
+                            @if (!subcontext.Vulnerabilities.Any())
+                            {
+                                @:&nbsp;
+                                <a class="btn btn-danger" href="sourceofawareness/delete/@subcontext.SourceOfAwarenessId">Delete</a>
+                            }
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" />
+                    </PagerContent>
+                </MudTable>
+
+            </MudTabPanel>
+            <MudTabPanel Text="Audit">
+
+                <AuditObjectsComponent AuditObjectList="@AuditObjects" />
+
+            </MudTabPanel>
+
+        </MudTabs>
+
+@*     </Authorized>
+</AuthorizeView> *@

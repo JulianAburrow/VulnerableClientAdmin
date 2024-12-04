@@ -1,0 +1,31 @@
+﻿@page "/vulnerableclients/index"
+@inherits VulnerableClientBasePageClass
+
+<PageTitle>Vulnerable Clients</PageTitle>
+
+@if (VulnerableClients == null)
+{
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Contacts</MudAlert>
+    return;
+}
+
+<br />
+
+@if (VulnerableClients.Any(v => v.VulnerabilityInformation == null))
+{
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">
+        <p>
+            The clients listed below have a status in the Contact table of 'Currently considered vulnerable' or 'Previously considered vulnerable'. However,
+            not every client so identified has had their vulnerability details recorded in this application. Where this is the case an
+            'Add Vulnerability Details' button will appear.
+        </p>
+    </MudAlert>
+}
+
+<span hidden="@(VulnerableClients == null || !VulnerableClients.Any())">
+    <button @onclick="ExportCSV" class="btn btn-success" hidden="@(VulnerableClients == null || !VulnerableClients.Any())">Download as CSV</button>
+    <br />
+    <br />
+</span>
+
+<VulnerableClientListViewComponent Clients="@VulnerableClients" />

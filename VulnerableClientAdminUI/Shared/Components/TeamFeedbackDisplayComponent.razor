@@ -1,0 +1,20 @@
+﻿<MudGrid>
+    <MudItem sm="12">
+        <MudCard>
+            <MudCardContent>
+                <MudField Label="Note">@TeamFeedbackModel.Feedback</MudField>
+                <MudField Label="Date">@TeamFeedbackModel.FeedbackDate.ToString("dd/MM/yyyy h:mm tt")</MudField>
+            </MudCardContent>
+            <MudCardActions>
+                
+            @* <AuthorizeView Roles="@RoleNames.SuperUserOnly">
+                <Authorized> *@
+                    <a class="btn btn-primary" href="teamfeedback/edit/@TeamFeedbackModel.TeamFeedbackId">Edit</a>
+                    &nbsp;
+                @* </Authorized>
+            </AuthorizeView> *@
+            <a class="btn btn-primary" href="teamfeedbacks/@TeamFeedbackModel.VulnerabilityInformationId/index">Back to list</a>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+</MudGrid>

@@ -1,0 +1,37 @@
+﻿@inherits BasePageClass
+
+@if (AuditObjectList == null)
+{
+    return;
+}
+
+<MudTable Items="AuditObjectList"
+    Hover
+    FixedHeader="true"
+    Height="500">
+    <HeaderContent>
+        <MudTh title="Sort by Column Name">
+            <MudTableSortLabel SortBy="new Func<AuditObjectModel, object>(x => x.ColumnName)">
+                 Column Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>Previous Value</MudTh>
+        <MudTh>Current Value</MudTh>
+        <MudTh title="Sort by Changed Date">
+            <MudTableSortLabel SortBy="new Func<AuditObjectModel, object>(x => x.ChangedDate)">
+                 Changed Date
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh>Changed By</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@(SharedMethods.SplitPascalCaseStrings(context.ColumnName))</MudTd>        
+        <MudTd>@context.PreviousValue</MudTd>
+        <MudTd>@context.NewValue</MudTd>
+        <MudTd>@context.ChangedDate.ToString("dd/MM/yyyy h:mm tt")</MudTd>
+        <MudTd>@context.ChangedBy</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" />
+    </PagerContent>
+</MudTable>

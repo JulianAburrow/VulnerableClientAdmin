@@ -1,0 +1,61 @@
+﻿@page
+@model UserDetailsModel
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<h1>@ViewData["Title"] for @Model.UserDetails.User.UserName</h1>
+
+<br />
+<br />
+
+@{
+    if (User.IsInRole(RoleNames.SuperUserOnly))
+    {
+        <dl class="row">
+            <dt class="col-sm-1">
+                @Html.DisplayNameFor(model => model.UserDetails.User.UserName)
+            </dt>
+            <dd class="col-sm-11">
+                @Html.DisplayFor(model => model.UserDetails.User.UserName)
+            </dd>
+            <dt class="col-sm-1">
+                @Html.DisplayNameFor(model => model.UserDetails.User.Email)
+            </dt>
+            <dd class="col-sm-11">
+                @Html.DisplayFor(model => model.UserDetails.User.Email)
+            </dd>
+            <dt class="col-sm-1">
+                Current Roles
+            </dt>
+            <dd class="col-sm-11">
+                <ul>
+                    @{
+                        if (!Model.UserDetails.CurrentRoles.Any())
+                        {
+                            <li style="color: red">None</li>
+                        }
+                        else
+                        {
+                            foreach (var currentRole in Model.UserDetails.CurrentRoles)
+                            {
+                                <li>@currentRole</li>
+                            }
+                        }
+                    }
+                </ul>
+            </dd>
+        </dl>
+        <a href="./ListUsers" class="btn btn-primary">List Users</a>
+        @:&nbsp;
+        <a asp-page="./AddUserToRole" asp-route-id="@Model.UserDetails.User.Id" class="btn btn-primary">Add To Role</a>
+        @:&nbsp;
+        <a asp-page="./RemoveUserFromRole" asp-route-id="@Model.UserDetails.User.Id" class="btn btn-danger">Remove From Role</a>
+        @:&nbsp;
+        <a asp-page="./DeleteUser" asp-route-id="@Model.UserDetails.User.Id" class="btn btn-danger">Delete User</a>
+    }
+    else
+    {
+        <h4>You are not authorised to view this page</h4>
+    }
+}

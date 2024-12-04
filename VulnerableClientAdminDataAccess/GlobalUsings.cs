@@ -1,0 +1,10 @@
+﻿//global using Exceptionless;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using VulnerableClientAdminDataAccess.CommonValues;
+global using VulnerableClientAdminDataAccess.Configuration;
+global using VulnerableClientAdminDataAccess.Data;
+global using VulnerableClientAdminDataAccess.Interfaces;
+global using VulnerableClientAdminDataAccess.Models;

@@ -1,0 +1,51 @@
+﻿<MudTable Items="CDOutcomes"
+          Hover
+          FixedHeader="true"
+          Height="500">
+    <HeaderContent>
+        @if(ShowClientNames)
+        {
+            <MudTh title="Sort by First Name">
+                <MudTableSortLabel SortBy="new Func<CDOutcomeModel, object>(x => x.FirstName)">
+                    First Name
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh title="Sort by Last Name">
+                <MudTableSortLabel SortBy="new Func<CDOutcomeModel, object>(x => x.LastName)">
+                    Last Name
+                </MudTableSortLabel>
+            </MudTh>
+        }
+        <MudTh title="Sort By Column Name">
+            <MudTableSortLabel SortBy="new Func<CDOutcomeModel, object>(x => x.ColumnName)">
+                Column Name
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by Outcome">
+            <MudTableSortLabel SortBy="new Func<CDOutcomeModel, object>(x => x.Outcome)">
+                Outcome
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by Evaluation Date">
+            <MudTableSortLabel SortBy="new Func<CDOutcomeModel, object>(x => x.EvaluationDate)">
+                Evaluation Date
+            </MudTableSortLabel>
+        </MudTh>
+        <MudTh title="Sort by Completed By">
+            <MudTableSortLabel SortBy="new Func<CDOutcomeModel, object>(x => x.CompletedBy)">
+                Completed By
+            </MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate Context="subcontext">
+        @if(ShowClientNames)
+        {
+            <MudTd>@subcontext.FirstName</MudTd>
+            <MudTd>@subcontext.LastName</MudTd>
+        }
+        <MudTd>@SharedMethods.SplitPascalCaseStrings(subcontext.ColumnName)</MudTd>
+        <MudTd>@subcontext.Outcome</MudTd>
+        <MudTd>@subcontext.EvaluationDate.ToString("dd/MM/yyyy h:mm tt")</MudTd>
+        <MudTd>@subcontext.CompletedBy</MudTd>
+    </RowTemplate>
+</MudTable>

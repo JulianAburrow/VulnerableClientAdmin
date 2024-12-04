@@ -1,0 +1,12 @@
+﻿@page "/savedpage/create"
+@inherits SavedPageBasePageClass
+
+<PageTitle>Create Saved Page</PageTitle>
+
+<EditForm Model="@SavedPageDisplayModel" OnValidSubmit="CreateSavedPage">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <SavedPageCreateUpdateComponent SavedPageDisplayModel="@SavedPageDisplayModel" />
+
+</EditForm>

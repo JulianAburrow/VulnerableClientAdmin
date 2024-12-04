@@ -1,0 +1,27 @@
+﻿@page "/"
+@inherits VulnerabilityBasePageClass
+
+<PageTitle>Vulnerable Client Admin</PageTitle>
+
+@if (VulnerabilitiesForTodayOrEarlier == null)
+{
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Vulnerabilities For Today Or Earlier</MudAlert>
+    return;
+}
+
+<br />
+
+@if (!VulnerabilitiesForTodayOrEarlier.Any())
+{
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">
+        No Vulnerabilities in the diary for today
+    </MudAlert>
+    return;
+}
+
+<button @onclick="ExportCSV" class="btn btn-success">Download as CSV</button>
+
+<br />
+<br />
+
+<VulnerabilityListViewComponent Vulnerabilities="VulnerabilitiesForTodayOrEarlier" />
