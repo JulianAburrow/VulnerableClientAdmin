@@ -15,16 +15,16 @@ USE VulnerableClientAdmin
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.objects
-	WHERE object_Id = OBJECT_ID(N'[dbo].[VulnerabilityStatus]') AND type IN (N'U'))
+	WHERE object_Id = OBJECT_ID(N'[vcadminoperations].[VulnerabilityStatus]') AND type IN (N'U'))
 
-	BEGIN CREATE TABLE VulnerabilityStatus (
+	BEGIN CREATE TABLE vcadminoperations.VulnerabilityStatus (
 			VulnerabilityStatusId INT NOT NULL IDENTITY (1, 1),
 			StatusName NVARCHAR(50) NOT NULL,
 			CONSTRAINT PK_VulnerabilityStatus PRIMARY KEY (VulnerabilityStatusId)
 		)
 	END
 
-INSERT INTO VulnerabilityStatus
+INSERT INTO vcadminoperations.VulnerabilityStatus
 	( StatusName )
 VALUES 
 	( 'Vulnerability Not Assessed' ),
