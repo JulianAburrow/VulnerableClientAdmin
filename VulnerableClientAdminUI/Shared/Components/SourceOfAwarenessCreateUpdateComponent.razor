@@ -3,7 +3,7 @@
         <MudCard>
             <MudCardContent>
                 <MudTextField Label="Source" @bind-Value="SourceOfAwarenessDisplayModel.Source" AutoFocus OnlyValidateIfDirty="true" Disabled="@PreventEditing" />
-                <MudCheckBox Label="Active" @bind-Checked="SourceOfAwarenessDisplayModel.SourceActive" />
+                <MudCheckBox Label="Active" T="bool" @bind-Value="SourceOfAwarenessDisplayModel.SourceActive" />
                 <MudTextField Label="Description" @bind-Value="SourceOfAwarenessDisplayModel.Description" Lines="3" />
              </MudCardContent>
              <MudCardActions>

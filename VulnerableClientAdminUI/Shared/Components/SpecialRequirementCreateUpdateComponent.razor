@@ -3,7 +3,7 @@
         <MudCard>
             <MudCardContent>
                 <MudTextField Label="Requirement" @bind-Value="SpecialRequirementDisplayModel.Requirement" AutoFocus OnlyValidateIfDirty="true" Disabled="@PreventEditing" />
-                <MudCheckBox Label="Active" @bind-Checked="SpecialRequirementDisplayModel.RequirementActive" />
+                <MudCheckBox Label="Active" T="bool" @bind-Value="SpecialRequirementDisplayModel.RequirementActive" />
                 <MudTextField Label="Description" @bind-Value="SpecialRequirementDisplayModel.Description" Lines="3" />
             </MudCardContent>
             <MudCardActions>

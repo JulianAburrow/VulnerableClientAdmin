@@ -5,7 +5,7 @@
                 <MudTextField Label="Title" @bind-Value="SavedPageDisplayModel.Title" AutoFocus OnlyValidateIfDirty="true" />
                  <MudTextField Label="Url" @bind-Value="SavedPageDisplayModel.Url" />
                  <MudTextField Label="Notes" Lines="3" @bind-Value="SavedPageDisplayModel.Notes" />
-                 <MudCheckBox Label="External" @bind-Checked="SavedPageDisplayModel.IsExternal" />
+                 <MudCheckBox Label="External" T="bool" @bind-Value="SavedPageDisplayModel.IsExternal" />
              </MudCardContent>
              <MudCardActions>
                  <button type="submit" class="btn btn-primary">Submit</button>&nbsp;<a class="btn btn-primary" href="savedpages/index">Cancel</a>

@@ -8,7 +8,7 @@
 
         <br />
 
-        @if (SourceOfAwarenessModel == null)
+        @if (SourceOfAwarenessModel == null || SourceOfAwarenessDisplayModel == null)
         {
             <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Source Of Awareness</MudAlert>
             return;
