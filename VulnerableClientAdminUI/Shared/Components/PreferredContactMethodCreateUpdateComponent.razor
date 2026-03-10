@@ -3,7 +3,7 @@
         <MudCard>
             <MudCardContent>
                 <MudTextField Label="Contact Method" @bind-Value="PreferredContactMethodDisplayModel.Method" AutoFocus OnlyValidateIfDirty="true" Disabled="@PreventEditing" />
-                <MudCheckBox Label="Active" @bind-Checked="PreferredContactMethodDisplayModel.MethodActive" />
+                <MudCheckBox Label="Active" T="bool" @bind-Value="PreferredContactMethodDisplayModel.MethodActive" />
                 <MudTextField Label="Description" @bind-Value="PreferredContactMethodDisplayModel.Description" Lines="3" />
              </MudCardContent>
              <MudCardActions>

@@ -8,7 +8,7 @@ public class SourceOfAwarenessBasePageClass : BasePageClass
 
     [Parameter] public int SourceOfAwarenessId { get; set; }
 
-    protected SourceOfAwarenessDisplayModel SourceOfAwarenessDisplayModel = new();
+    protected SourceOfAwarenessDisplayModel? SourceOfAwarenessDisplayModel = new();
 
     protected void PopulateModelFromDisplayModel()
     {
