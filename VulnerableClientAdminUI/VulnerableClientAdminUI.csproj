@@ -21,7 +21,7 @@
 
 	<ItemGroup>
 		<!--<PackageReference Include="Exceptionless.AspNetCore" Version="6.0.4" />-->
-		<PackageReference Include="MudBlazor" Version="8.15.0" />
+		<PackageReference Include="MudBlazor" Version="9.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
