@@ -3,7 +3,7 @@
 
 <PageTitle>Vulnerable Client Admin</PageTitle>
 
-<AuthorizeView Policy="AllRolesPolicy">
+<AuthorizeView Policy="@PolicyNames.AllRolesPolicy">
     <Authorized>
 
         @if (VulnerabilitiesForTodayOrEarlier is null)

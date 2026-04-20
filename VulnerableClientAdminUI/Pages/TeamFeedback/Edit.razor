@@ -3,7 +3,7 @@
 
 <PageTitle>Edit Team Feedback</PageTitle>
 
-<AuthorizeView Policy="ElevatedPolicy">
+<AuthorizeView Policy="@PolicyNames.ElevatedRolesPolicy">
     <Authorized>
 
         @if (TeamFeedbackModel is null)

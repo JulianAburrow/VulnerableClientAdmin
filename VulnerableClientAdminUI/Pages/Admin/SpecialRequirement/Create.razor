@@ -3,7 +3,7 @@
 
 <PageTitle>Create Special Requirement</PageTitle>
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         <EditForm Context="subcontext" Model="@SpecialRequirementDisplayModel" OnValidSubmit="CreateSpecialRequirement">

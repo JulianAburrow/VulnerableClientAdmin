@@ -17,7 +17,7 @@
         <TeamFeedbackDisplayComponent TeamFeedbackModel="@TeamFeedbackModel" />
     </MudTabPanel>
     
-    <AuthorizeView Policy="ElevatedPolicy">
+    <AuthorizeView Policy="@PolicyNames.ElevatedRolesPolicy">
         <Authorized>
             <MudTabPanel Text="Audit">
                 <AuditObjectsComponent AuditObjectList="@AuditObjects" />

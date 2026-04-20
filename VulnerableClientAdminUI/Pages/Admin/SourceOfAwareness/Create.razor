@@ -3,7 +3,7 @@
 
 <PageTitle>Create Source Of Awareness</PageTitle>
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         <EditForm Context="subcontext" Model="@SourceOfAwarenessDisplayModel" OnValidSubmit="CreateSourceOfAwareness">

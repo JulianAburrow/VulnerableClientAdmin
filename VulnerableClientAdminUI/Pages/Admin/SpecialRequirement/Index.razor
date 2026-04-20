@@ -3,7 +3,7 @@
 
 <PageTitle>Special Requirements</PageTitle>
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         @if (SpecialRequirements is null)

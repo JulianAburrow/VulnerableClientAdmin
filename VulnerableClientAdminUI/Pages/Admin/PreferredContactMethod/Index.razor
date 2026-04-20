@@ -3,7 +3,7 @@
 
 <PageTitle>Preferred Contact Methods</PageTitle>
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         @if (PreferredContactMethods is null)

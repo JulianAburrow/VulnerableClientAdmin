@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<AuthorizeView Policy="AllRolesPolicy">
+<AuthorizeView Policy="@PolicyNames.AllRolesPolicy">
     <Authorized>
         <MudNavMenu>
 
@@ -24,7 +24,7 @@
             </MudNavGroup>
 
             <!-- 🔐 ADMIN SECTION -->
-            <AuthorizeView Policy="AdminPolicy">
+            <AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
                 <Authorized context="subcontext">
                     <MudNavGroup Title="Admin" Expanded="false">
                         <MudNavLink Href="preferredcontactmethods/index">Preferred Contact Methods</MudNavLink>

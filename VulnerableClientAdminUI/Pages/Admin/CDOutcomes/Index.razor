@@ -5,7 +5,7 @@
 
 
 
-<AuthorizeView Policy="ElevatedPolicy">
+<AuthorizeView Policy="@PolicyNames.ElevatedRolesPolicy">
     <Authorized>
 
         @if (VulnerableClients is null)

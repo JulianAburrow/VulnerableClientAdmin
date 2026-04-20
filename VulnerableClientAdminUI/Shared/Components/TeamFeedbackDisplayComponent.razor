@@ -6,7 +6,7 @@
                 <MudField Label="Date">@TeamFeedbackModel.FeedbackDate.ToString("dd/MM/yyyy h:mm tt")</MudField>
             </MudCardContent>
             <MudCardActions>
-                <AuthorizeView Policy="ElevatedPolicy">
+                <AuthorizeView Policy="@PolicyNames.ElevatedRolesPolicy">
                     <Authorized>
                         <a class="btn btn-primary" href="teamfeedback/edit/@TeamFeedbackModel.TeamFeedbackId">Edit</a>
                         &nbsp;

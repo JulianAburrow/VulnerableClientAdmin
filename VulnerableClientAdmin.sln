@@ -13,11 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{78B8E2AE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VulnerableClientAdminTest", "VulnerableClientAdminTest\VulnerableClientAdminTest.csproj", "{BFB6D969-67E3-4277-A35E-56C2B9279EFC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{A518B963-C3CD-4737-9396-095760407F83}"
-	ProjectSection(SolutionItems) = preProject
-		Documents\Vulnerable Client Admin Architecture.docx = Documents\Vulnerable Client Admin Architecture.docx
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DbScripts", "DbScripts", "{2EB460D3-1BAE-4DFB-942A-2306DE3042EB}"
 	ProjectSection(SolutionItems) = preProject
 		DbScript\CreateVCATables.sql = DbScript\CreateVCATables.sql

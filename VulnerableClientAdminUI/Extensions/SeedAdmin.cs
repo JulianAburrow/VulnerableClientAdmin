@@ -48,9 +48,9 @@ public static class SeedAdmin
         }
 
         // Ensure admin user is in the admin role only
-        if (!await userManager.IsInRoleAsync(adminUser, RoleNames.AdminRole))
+        if (!await userManager.IsInRoleAsync(adminUser, PolicyNames.AdminRolePolicy))
         {
-            await userManager.AddToRoleAsync(adminUser, RoleNames.AdminRole);
+            await userManager.AddToRoleAsync(adminUser, PolicyNames.AdminRolePolicy);
         }
     }
 }

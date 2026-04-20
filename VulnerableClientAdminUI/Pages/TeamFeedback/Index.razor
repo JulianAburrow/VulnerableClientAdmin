@@ -11,7 +11,7 @@
 
 <br />
 
-<AuthorizeView Policy="ElevatedPolicy">
+<AuthorizeView Policy="@PolicyNames.ElevatedRolesPolicy">
     <Authorized>
 
         <h3>Add New Feedback</h3>
@@ -61,7 +61,7 @@
         <MudTd>@context.CreatedBy</MudTd>
         <MudTd>
             <a href="teamfeedback/view/@context.TeamFeedbackId" class="btn btn-primary">View</a>
-            <AuthorizeView Policy="ElevatedPolicy">
+            <AuthorizeView Policy="@PolicyNames.ElevatedRolesPolicy">
                 <Authorized Context="subcontext">
                     &nbsp;
                     <a href="teamfeedback/edit/@context.TeamFeedbackId" class="btn btn-primary">Edit</a>
@@ -80,7 +80,7 @@
 <a href="/" class="btn btn-primary">Home</a>
     &nbsp;
 <a href="vulnerabilityinformation/summary/@ContactId" class="btn btn-primary">Summary</a>
-<AuthorizeView Policy="ElevatedPolicy">
+<AuthorizeView Policy="@PolicyNames.ElevatedRolesPolicy">
     <Authorized>
         &nbsp;
         <a href="vulnerabilityinformation/details/@ContactId" class="btn btn-primary">Details</a>

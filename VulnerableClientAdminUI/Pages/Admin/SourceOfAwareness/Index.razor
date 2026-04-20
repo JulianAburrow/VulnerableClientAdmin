@@ -3,7 +3,7 @@
 
 <PageTitle>Sources Of Awareness</PageTitle>
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         @if (SourcesOfAwareness is null)

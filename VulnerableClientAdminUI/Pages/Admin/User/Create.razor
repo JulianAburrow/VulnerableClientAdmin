@@ -9,7 +9,7 @@
     return;
 }
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         <EditForm Context="subcontext" Model="@UserDisplayModel" OnValidSubmit="CreateUser">

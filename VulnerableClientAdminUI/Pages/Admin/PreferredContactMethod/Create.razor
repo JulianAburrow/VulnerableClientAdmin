@@ -3,7 +3,7 @@
 
 <PageTitle>Create Preferred Contact Method</PageTitle>
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         <EditForm Context="subcontext" Model="@PreferredContactMethodDisplayModel" OnValidSubmit="CreatePreferredContactMethod">

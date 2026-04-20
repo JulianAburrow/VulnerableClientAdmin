@@ -3,7 +3,7 @@
 
 <PageTitle>Edit User</PageTitle>
 
-<AuthorizeView Policy="AdminPolicy">
+<AuthorizeView Policy="@PolicyNames.AdminRolePolicy">
     <Authorized>
 
         @if (Roles is null || User is null)
