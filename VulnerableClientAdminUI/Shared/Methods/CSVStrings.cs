@@ -123,7 +123,7 @@ public static class CSVStrings
             vulnerableClientsSB.Append($"{RemoveCommas(vulnerableClient.VulnerabilityInformation.CDOutcomeTakingPracticalActionsBadOutcomes)},");
             vulnerableClientsSB.Append($"{RemoveCommas(vulnerableClient.VulnerabilityInformation.CDOutcomeMonitoringAndEvaluationGoodOutcomes)},");
             vulnerableClientsSB.Append($"{RemoveCommas(vulnerableClient.VulnerabilityInformation.CDOutcomeMonitoringAndEvaluationBadOutcomes)},");
-            if (vulnerableClient.VulnerabilityInformation.VulnerabilityNotes != null)
+            if (vulnerableClient.VulnerabilityInformation.VulnerabilityNotes is not null)
             {
                 foreach (var vulnerabilityNote in vulnerableClient.VulnerabilityInformation.VulnerabilityNotes)
                 {
@@ -132,7 +132,7 @@ public static class CSVStrings
                 vulnerableClientsSB.Remove(vulnerableClientsSB.Length - 1, 1);
             }            
             vulnerableClientsSB.Append(",");
-            if (vulnerableClient.VulnerabilityInformation.TeamFeedbacks != null)
+            if (vulnerableClient.VulnerabilityInformation.TeamFeedbacks is not null)
             {
                 foreach (var teamFeedback in vulnerableClient.VulnerabilityInformation.TeamFeedbacks)
                 {
@@ -166,7 +166,7 @@ public static class CSVStrings
 
     private static string RemoveCommas(string? stringToCheck)
     {
-        if (stringToCheck == null)
+        if (stringToCheck is null)
             return string.Empty;
         return stringToCheck.Replace(",", "-");
     }
@@ -174,7 +174,7 @@ public static class CSVStrings
     private static string GetDateNoLongerConsideredVulnerable(List<VulnerabilityModel> vulnerabilities)
     {
         vulnerabilities = vulnerabilities.OrderBy(v => v.VulnerabilityDateRemoved).ToList();
-        return vulnerabilities.Last().VulnerabilityDateRemoved != null
+        return vulnerabilities.Last().VulnerabilityDateRemoved is not null
             ? vulnerabilities.Last().VulnerabilityDateRemoved.Value.ToString("dd/MM/yyyy")
             : string.Empty;
     }
@@ -191,7 +191,7 @@ public static class CSVStrings
             vulnerabilityStatusComparisonSB.Append($"{vulnerability.Contact.MiddleName},");
             vulnerabilityStatusComparisonSB.Append($"{vulnerability.Contact.Surname},");
             vulnerabilityStatusComparisonSB.Append($"{vulnerability.Contact.VulnerabilityStatus.StatusName},");
-            var currentlyConsideredVulnerable = vulnerability.Vulnerabilities.Any(v => v.VulnerabilityDateRemoved == null);
+            var currentlyConsideredVulnerable = vulnerability.Vulnerabilities.Any(v => v.VulnerabilityDateRemoved is null);
             var stringToOutput = currentlyConsideredVulnerable
                 ? "Currently considered vulnerable"
                 : "Previously considered vulnerable";

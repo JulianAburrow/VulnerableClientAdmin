@@ -1,77 +1,139 @@
-namespace VulnerableClientAdminUI.Areas.Identity.Pages.Account;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+#nullable disable
 
-public class RegisterModel : PageModel
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace VulnerableClientAdminUI.Areas.Identity.Pages.Account
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public RegisterModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+    public class RegisterModel : PageModel
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
-    }
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly IUserEmailStore<ApplicationUser> _emailStore;
+        private readonly ILogger<RegisterModel> _logger;
+        private readonly IEmailSender _emailSender;
+        private readonly VulnerableClientAdminContext _context;
 
-    [BindProperty]
-    public RegisterInputModel RegisterInput { get; set; } = null!;
-
-    public class RegisterInputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "{0} is required")]
-        [DataType(DataType.Password)]
-        public string Password { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "{0} is required")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        [Compare(nameof(Password), ErrorMessage = "The password and confirmation password do not match")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-    }
-
-    public string ReturnUrl { get; set; } = string.Empty;
-
-    public void OnGet()
-    {
-        ReturnUrl = Url.Content("~/");
-    }
-
-    public async Task<IActionResult> OnPost()
-    {
-        ReturnUrl = Url.Content("~/Identity/Account/Registered");
-
-        if (!ModelState.IsValid)
+        public RegisterModel(
+            UserManager<ApplicationUser> userManager,
+            IUserStore<ApplicationUser> userStore,
+            SignInManager<ApplicationUser> signInManager,
+            ILogger<RegisterModel> logger,
+            IEmailSender emailSender,
+            VulnerableClientAdminContext context)
         {
+            _userManager = userManager;
+            _userStore = userStore;
+            _emailStore = GetEmailStore();
+            _signInManager = signInManager;
+            _logger = logger;
+            _emailSender = emailSender;
+            _context = context;
+        }
+
+        [BindProperty]
+        public InputModel Input { get; set; }
+
+        public string ReturnUrl { get; set; }
+
+        public List<SelectListItem> Statuses { get; set; }
+
+        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+
+        public class InputModel
+        {
+            [Required]
+            public string FirstName { get; set; }
+
+            [Required]
+            public string LastName { get; set; }
+
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+
+            [Required]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [DataType(DataType.Password)]
+            [Display(Name = "Password")]
+            public string Password { get; set; }
+
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirm password")]
+            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }
+        }
+
+
+        public async Task OnGetAsync(string returnUrl = null)
+        {
+            ReturnUrl = returnUrl;
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        }
+
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        {
+            returnUrl ??= Url.Content("~/");
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            if (ModelState.IsValid)
+            {
+                var user = CreateUser();
+
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+
+                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                var result = await _userManager.CreateAsync(user, Input.Password);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "User");
+                    _logger.LogInformation("User created a new account with password.");
+
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnUrl);
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
             return Page();
         }
 
-        var errorMessage = "An error occurred attempting to register. Please try again.";
-
-        try
+        private ApplicationUser CreateUser()
         {
-            var identity = new IdentityUser { UserName = RegisterInput.Email, Email = RegisterInput.Email };
-            var result = await _userManager.CreateAsync(identity, RegisterInput.Password);
-
-            if (result.Succeeded)
+            try
             {
-                await _signInManager.SignInAsync(identity, isPersistent: false);
-                return LocalRedirect(ReturnUrl);
+                return Activator.CreateInstance<ApplicationUser>();
             }
-
-            ViewData[CommonValues.ErrorMessage] = errorMessage;
-
-            throw new Exception(result.Errors.FirstOrDefault() != null
-                ? $"{result.Errors.First().Code}" +
-                $": {result.Errors.First().Description}" : "Unknown error");
+            catch
+            {
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                    $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+            }
         }
-        catch (Exception ex)
-        {
-            //ex.ToExceptionless().Submit();
-            ViewData[CommonValues.ErrorMessage] = errorMessage;
-        }        
 
-        return Page();
+        private IUserEmailStore<ApplicationUser> GetEmailStore()
+        {
+            if (!_userManager.SupportsUserEmail)
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
+            return (IUserEmailStore<ApplicationUser>)_userStore;
+        }
     }
 }

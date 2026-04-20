@@ -43,7 +43,7 @@ public class PreferredContactMethodHandler : IPreferredContactMethodHandler
     {
         var preferredContactMethodToUpdate = await _context.PreferredContactMethods
             .SingleOrDefaultAsync(p => p.PreferredContactMethodId == preferredContactMethod.PreferredContactMethodId);
-        if (preferredContactMethodToUpdate == null)
+        if (preferredContactMethodToUpdate is null)
             return;
 
         preferredContactMethodToUpdate.Method = preferredContactMethod.Method;
@@ -61,7 +61,7 @@ public class PreferredContactMethodHandler : IPreferredContactMethodHandler
         var preferredContactMethodToDelete = _context.PreferredContactMethods
             .SingleOrDefault(p =>
                 p.PreferredContactMethodId == preferredContactMethodId);
-        if (preferredContactMethodToDelete == null)
+        if (preferredContactMethodToDelete is null)
             return;
 
         _context.PreferredContactMethods.Remove(preferredContactMethodToDelete);

@@ -1,0 +1,18 @@
+﻿@page "/sourceofawareness/create"
+@inherits SourceOfAwarenessBasePageClass
+
+<PageTitle>Create Source Of Awareness</PageTitle>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+
+        <EditForm Context="subcontext" Model="@SourceOfAwarenessDisplayModel" OnValidSubmit="CreateSourceOfAwareness">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <SourceOfAwarenessCreateUpdateComponent SourceOfAwarenessDisplayModel="@SourceOfAwarenessDisplayModel" />
+
+        </EditForm>
+
+    </Authorized>
+</AuthorizeView>

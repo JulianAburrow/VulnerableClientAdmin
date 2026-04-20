@@ -1,0 +1,49 @@
+﻿@page "/sourceofawareness/delete/{SourceOfAwarenessid:int}"
+@inherits SourceOfAwarenessBasePageClass
+
+<PageTitle>Delete Source Of Awareness</PageTitle>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+
+        <br />
+
+        @if (SourceOfAwarenessModel is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Source Of Awareness</MudAlert>
+            return;
+        }
+
+        @if (PreventDeleting)
+        {
+            <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">
+                <h4>This Source Of Awareness cannot be deleted as it is in use.</h4>
+            </MudAlert>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">
+                <h4>Are you sure you want to delete this Source Of Awareness?</h4>
+            </MudAlert>
+        }
+
+        <br />
+
+        <MudGrid>
+            <MudItem sm="12">
+                <MudCard>
+                    <SourceOfAwarenessDisplayComponent SourceOfAwarenessModel="@SourceOfAwarenessModel" />
+                    <MudCardActions>
+                        @if (!PreventDeleting)
+                        {
+                            <button @onclick="DeleteSourceOfAwareness" class="btn btn-danger">Delete</button>
+                            @:&nbsp;
+                        }
+                        <a class="btn btn-primary" href="sourcesofawareness/index">Cancel</a>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+    </Authorized>
+</AuthorizeView>

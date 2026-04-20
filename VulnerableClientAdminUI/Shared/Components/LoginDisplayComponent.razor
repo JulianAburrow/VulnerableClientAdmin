@@ -1,10 +1,41 @@
-﻿<AuthorizeView>
+﻿
+@inject NavigationManager Nav
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<AuthorizeView>
     <Authorized>
-        <div style="float: left; margin: 10px">
-            Logged in as @context.User.Identity?.Name
-        </div>
-        <form method="post" action="Identity/Account/Logout">
-            <button type="submit" class="btn btn-light">Log out</button>
-        </form>
+        @if (authUser is not null)
+        {
+            <ul class="navbar-nav flex-row">
+               @*  <li class="nav-item mx-2">
+                    <a class="navbar-brand" href="/">Back to Vulnerable Client Admin</a>
+                </li> *@
+
+                <li class="nav-item mx-2">
+                    <a class="btn btn-light"
+                           href="/Identity/Account/Manage/Index">
+                        Hello @authUser.Identity?.Name!
+                    </a>
+                </li>
+
+                <li class="nav-item mx-2">
+                    <form method="post" action="/Identity/Account/Logout">
+                        <input type="hidden" name="__RequestVerificationToken"
+                               value="@AntiForgeryToken" />
+                        <button type="submit" class="btn btn-light">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        }
     </Authorized>
+
+    <NotAuthorized>
+        <a class ="btn btn-light" href="/Identity/Account/Register">Register</a>
+        |
+        <a class="btn btn-light" href="/Identity/Account/Login">Login</a>
+    </NotAuthorized>
 </AuthorizeView>
+

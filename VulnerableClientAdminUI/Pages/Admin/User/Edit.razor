@@ -1,0 +1,30 @@
+﻿@page "/user/edit/{id}"
+@inherits UserBasePageClass
+
+<PageTitle>Edit User</PageTitle>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+
+        @if (Roles is null || User is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading...</MudAlert>
+            return;
+        }
+
+        <br />
+
+        @if (PreventEditing)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">User cannot be edited as it is the current user.</MudAlert>
+        }
+
+        <EditForm Context="subcontext" Model="@User" OnValidSubmit="UpdateUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <UserCreateUpdateComponent Roles="Roles" UserDisplayModel="UserDisplayModel" PreventEditing="@PreventEditing" IsEdit="true" />
+        </EditForm>
+
+    </Authorized>
+</AuthorizeView>

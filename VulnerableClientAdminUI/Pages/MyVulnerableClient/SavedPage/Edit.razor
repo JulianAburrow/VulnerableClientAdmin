@@ -1,0 +1,18 @@
+﻿@page "/savedpage/edit/{SavedPageId:int}"
+@inherits SavedPageBasePageClass
+
+<PageTitle>Edit Saved Page</PageTitle>
+
+@if (SavedPageModel is null)
+{
+    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Saved Page</MudAlert>
+    return;
+}
+
+<EditForm Model="@SavedPageDisplayModel" OnValidSubmit="UpdateSavedPage">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <SavedPageCreateUpdateComponent SavedPageDisplayModel="@SavedPageDisplayModel" />
+
+</EditForm>

@@ -1,0 +1,82 @@
+﻿@page "/preferredcontactmethods/index"
+@inherits PreferredContactMethodBasePageClass
+
+<PageTitle>Preferred Contact Methods</PageTitle>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+
+        @if (PreferredContactMethods is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Preferred Contact Methods</MudAlert>
+            return;
+        }
+
+        <br />
+
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+
+            <MudTabPanel Text="Admin">
+
+                <br />
+
+                <a class="btn btn-primary" href="preferredcontactmethod/create">Add new</a>
+
+                <br />
+                <br />
+
+                <MudTable Items="PreferredContactMethods"
+                              Hover
+                              FixedHeader="true"
+                              Height="500">
+                         <HeaderContent>
+                             <MudTh title="Sort by Contact Method">
+                                 <MudTableSortLabel SortBy="new Func<PreferredContactMethodModel, object>(x => x.Method)">
+                                     Contact Method
+                                 </MudTableSortLabel>
+                             </MudTh>
+                             <MudTh title="Sort by Active">
+                                 <MudTableSortLabel SortBy="new Func<PreferredContactMethodModel, object>(x => x.MethodActive)">
+                                     Active
+                                 </MudTableSortLabel>
+                             </MudTh>
+                             <MudTh title="Sort by Usage">
+                                 <MudTableSortLabel SortBy="new Func<PreferredContactMethodModel, object>(x => x.Vulnerabilities.Count)">
+                                     Usage
+                                 </MudTableSortLabel>
+                             </MudTh>
+                             <MudTh></MudTh>
+                         </HeaderContent>
+                         <RowTemplate Context="subcontext">
+                                <MudTd title="@subcontext.Description">@subcontext.Method</MudTd>
+                                <MudTd>@subcontext.MethodActive</MudTd>
+                                <MudTd>@subcontext.Vulnerabilities.Count</MudTd>
+                                <MudTd>
+                                            <a class="btn btn-primary" href="preferredcontactmethod/view/@subcontext.PreferredContactMethodId">View</a>
+                                    &nbsp;
+                                            <a class="btn btn-primary" href="preferredcontactmethod/edit/@subcontext.PreferredContactMethodId">Edit</a>
+                                            @if (!subcontext.Vulnerabilities.Any())
+                                    {
+                                        @:&nbsp;
+                                            <a class="btn btn-danger" href="preferredcontactmethod/delete/@subcontext.PreferredContactMethodId">Delete</a>
+                                    }                        
+                            </MudTd>
+                        </RowTemplate>
+                        <PagerContent>
+                            <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" />
+                        </PagerContent>
+                    </MudTable>
+            </MudTabPanel>
+            <MudTabPanel Text="Audit">
+
+                <AuditObjectsComponent AuditObjectList="@AuditObjects" />
+
+            </MudTabPanel>
+
+        </MudTabs>
+
+    </Authorized>
+</AuthorizeView>
+
+
+

@@ -1,10 +1,25 @@
 ﻿namespace VulnerableClientAdminDataAccess.Data;
 
-public class VulnerableClientAdminContext : DbContext
+public class VulnerableClientAdminContext : IdentityDbContext<ApplicationUser>
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
     public VulnerableClientAdminContext(DbContextOptions<VulnerableClientAdminContext> options)
+    : base(options)
+    {
+        // Used only for tests
+    }
+
+
+    public VulnerableClientAdminContext(DbContextOptions<VulnerableClientAdminContext> options,
+                                            IHttpContextAccessor httpContextAccessor)
         : base(options)
-    { }
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    private string CurrentUserName =>
+        _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Unknown";
 
     public DbSet<AuditObjectModel> AuditObjects { get; set; }
     public DbSet<PreferredContactMethodModel> PreferredContactMethods { get; set; }
@@ -23,13 +38,10 @@ public class VulnerableClientAdminContext : DbContext
     {
         builder.HasDefaultSchema("vcadminoperations");
 
-        foreach (var property in builder.Model.GetEntityTypes()
-            .SelectMany(e => e.GetProperties()
-            .Where(p => p.ClrType == typeof(string))))
-        {
-            property.SetIsUnicode(false);
-        }
+        base.OnModelCreating(builder);
 
+        ConfigureIdentityTables(builder);
+        
         builder.ApplyConfiguration(new AuditObjectConfiguration());
         builder.ApplyConfiguration(new PreferredContactMethodConfiguration());
         builder.ApplyConfiguration(new SavedPageConfiguration());
@@ -44,6 +56,17 @@ public class VulnerableClientAdminContext : DbContext
         builder.ApplyConfiguration(new VulnerableClientConfiguration());
     }
 
+    private void ConfigureIdentityTables(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ApplicationUser>().ToTable("AspNetUsers", "vcadminsecurity");
+        modelBuilder.Entity<IdentityRole>().ToTable("AspNetRoles", "vcadminsecurity");
+        modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles", "vcadminsecurity");
+        modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("AspNetUserClaims", "vcadminsecurity");
+        modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins", "vcadminsecurity");
+        modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims", "vcadminsecurity");
+        modelBuilder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens", "vcadminsecurity");
+    }
+
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         foreach (var changedEntity in ChangeTracker.Entries())
@@ -54,9 +77,9 @@ public class VulnerableClientAdminContext : DbContext
                     if (changedEntity.Entity is IAuditableObject objAdded)
                     {
                         objAdded.DateCreated = DateTime.Now;
-                        objAdded.CreatedBy = GlobalVariables.UserName;
+                        objAdded.CreatedBy = CurrentUserName;
                         objAdded.DateLastUpdated = DateTime.Now;
-                        objAdded.LastUpdatedBy = GlobalVariables.UserName;
+                        objAdded.LastUpdatedBy = CurrentUserName;
                     }
                     break;
                 case EntityState.Modified:
@@ -64,7 +87,7 @@ public class VulnerableClientAdminContext : DbContext
                     if (changedEntity.Entity is IAuditableObject objModified)
                     {
                         objModified.DateLastUpdated = DateTime.Now;
-                        objModified.LastUpdatedBy = GlobalVariables.UserName;
+                        objModified.LastUpdatedBy = CurrentUserName;
                     }
                     break;
             }
@@ -89,24 +112,23 @@ public class VulnerableClientAdminContext : DbContext
                 var objectPrimaryKeyProperty = $"{objectType?[..^5]}Id";
                 var objectId = entityEntry.Entity.GetType().GetProperty(objectPrimaryKeyProperty)?.GetValue(entityEntry.Entity, null);
 
-                if (objectId == null)
+                if (objectId is null)
                     continue;
 
                 var AuditObject = new AuditObjectModel
                 {
-                    ObjectId = (int)objectId,
+                    ObjectId = objectId.ToString(),
                     ObjectType = objectType,
                     ColumnName = property.Metadata.Name,
-                    PreviousValue = property.OriginalValue != null ? property.OriginalValue.ToString() : string.Empty,
-                    NewValue = property.CurrentValue != null ? property.CurrentValue.ToString() : string.Empty,
+                    PreviousValue = property.OriginalValue is not null ? property.OriginalValue.ToString() : string.Empty,
+                    NewValue = property.CurrentValue is not null ? property.CurrentValue.ToString() : string.Empty,
                     ChangedDate = changedDate,
-                    ChangedBy = GlobalVariables.UserName,
+                    ChangedBy = CurrentUserName,
                 };
                 AuditObjects.Add(AuditObject);
             }
-            catch(Exception ex)
+            catch
             {
-                //ex.ToExceptionless().Submit();
                 continue;
             }
         }

@@ -1,0 +1,49 @@
+﻿@page "/sourceofawareness/view/{SourceOfAwarenessId:int}"
+@inherits SourceOfAwarenessBasePageClass
+
+<PageTitle>View Source Of Awareness</PageTitle>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+
+        <br />
+
+        @if (SourceOfAwarenessModel is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Source Of Awareness</MudAlert>
+            return;
+        }
+
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+
+            <MudTabPanel Text="Details">
+                <MudGrid>
+                    <MudItem sm="12">
+                        <MudCard>
+                            <SourceOfAwarenessDisplayComponent SourceOfAwarenessModel="@SourceOfAwarenessModel" />
+                            <MudCardActions>
+                                <a href="sourceofawareness/edit/@SourceOfAwarenessModel.SourceOfAwarenessId" class="btn btn-primary">Edit</a>
+                                @if (!PreventDeleting)
+                                {
+                                    @:&nbsp;
+                                    <a href="sourceofawareness/delete/@SourceOfAwarenessModel.SourceOfAwarenessId" class="btn btn-danger">Delete</a>
+                                }
+                                &nbsp;
+                                <a class="btn btn-primary" href="sourcesofawareness/index">Back to list</a>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+            <MudTabPanel Text="Audit">
+                <AuditObjectsComponent AuditObjectList="@AuditObjects" />
+            </MudTabPanel>
+        </MudTabs>
+
+        <CreatedLastUpdatedDisplayComponent CreatedBy="@SourceOfAwarenessModel.CreatedBy"
+                                            DateCreated="@SourceOfAwarenessModel.DateCreated"
+                                            LastUpdatedBy="@SourceOfAwarenessModel.LastUpdatedBy"
+                                            DateLastUpdated="@SourceOfAwarenessModel.DateLastUpdated" />
+
+    </Authorized>
+</AuthorizeView>

@@ -1,6 +1,6 @@
 ﻿@inherits BasePageClass
 
-@if (AuditObjectList == null)
+@if (AuditObjectList is null)
 {
     return;
 }
@@ -25,7 +25,7 @@
         <MudTh>Changed By</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@(SharedMethods.SplitPascalCaseStrings(context.ColumnName))</MudTd>        
+        <MudTd>@(CSVMethods.SplitPascalCaseStrings(context.ColumnName))</MudTd>        
         <MudTd>@context.PreviousValue</MudTd>
         <MudTd>@context.NewValue</MudTd>
         <MudTd>@context.ChangedDate.ToString("dd/MM/yyyy h:mm tt")</MudTd>

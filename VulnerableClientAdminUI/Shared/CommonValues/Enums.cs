@@ -18,6 +18,7 @@ public class Enums
         VulnerabilityReasonModel,
         SourceOfAwarenessModel,
         TeamFeedbackModel,
+        ApplicationUser,
     }
 
     public enum VulnerabilityState

@@ -5,10 +5,8 @@ public static class ServiceExtensions
     public static void ConfigureSqlConnections(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("VulnerableClientAdminConnectionString");
+        
         services.AddDbContext<VulnerableClientAdminContext>(
-            options =>
-                options.UseSqlServer(connectionString));
-        services.AddDbContext<IdentityContext>(
             options =>
                 options.UseSqlServer(connectionString));
     }

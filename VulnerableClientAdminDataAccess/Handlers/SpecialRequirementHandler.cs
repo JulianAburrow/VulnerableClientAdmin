@@ -43,7 +43,7 @@ public class SpecialRequirementHandler : ISpecialRequirementHandler
     {
         var specialRequirementToUpdate = await _context.SpecialRequirements
             .SingleOrDefaultAsync(s => s.SpecialRequirementId == specialRequirement.SpecialRequirementId);
-        if (specialRequirementToUpdate == null)
+        if (specialRequirementToUpdate is null)
             return;
 
         specialRequirementToUpdate.Requirement = specialRequirement.Requirement;
@@ -61,7 +61,7 @@ public class SpecialRequirementHandler : ISpecialRequirementHandler
         var specialRequirementToDelete = _context.SpecialRequirements
             .SingleOrDefault(s =>
                 s.SpecialRequirementId == specialRequirementId);
-        if (specialRequirementToDelete == null)
+        if (specialRequirementToDelete is null)
             return;
 
         _context.SpecialRequirements.Remove(specialRequirementToDelete);

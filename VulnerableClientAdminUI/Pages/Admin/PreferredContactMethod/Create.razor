@@ -1,0 +1,19 @@
+﻿@page "/preferredcontactmethod/create"
+@inherits PreferredContactMethodBasePageClass
+
+<PageTitle>Create Preferred Contact Method</PageTitle>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+
+        <EditForm Context="subcontext" Model="@PreferredContactMethodDisplayModel" OnValidSubmit="CreatePreferredContactMethod">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <PreferredContactMethodCreateUpdateComponent PreferredContactMethodDisplayModel="@PreferredContactMethodDisplayModel" />
+
+        </EditForm>
+
+    </Authorized>
+</AuthorizeView>
+

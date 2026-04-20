@@ -35,7 +35,7 @@ public class TeamFeedbackHandler : ITeamFeedbackHandler
     public async Task UpdateTeamFeedbackAsync(TeamFeedbackModel teamFeedback, bool callSaveChanges)
     {
         var teamFeedbackToUpdate = await _context.TeamFeedbacks.SingleOrDefaultAsync(t => t.TeamFeedbackId == teamFeedback.TeamFeedbackId);
-        if (teamFeedbackToUpdate == null)
+        if (teamFeedbackToUpdate is null)
             return;
 
         teamFeedbackToUpdate.Feedback = teamFeedback.Feedback;

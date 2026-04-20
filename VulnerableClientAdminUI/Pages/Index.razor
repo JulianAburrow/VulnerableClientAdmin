@@ -1,0 +1,38 @@
+﻿@page "/"
+@inherits VulnerabilityBasePageClass
+
+<PageTitle>Vulnerable Client Admin</PageTitle>
+
+<AuthorizeView Policy="AllRolesPolicy">
+    <Authorized>
+
+        @if (VulnerabilitiesForTodayOrEarlier is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Vulnerabilities For Today Or Earlier</MudAlert>
+            return;
+        }
+
+        <br />
+
+        @if (!VulnerabilitiesForTodayOrEarlier.Any())
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">
+                No Vulnerabilities in the diary for today
+            </MudAlert>
+            return;
+        }
+
+        <button @onclick="ExportCSV" class="btn btn-success">Download as CSV</button>
+
+        <br />
+        <br />
+
+        <VulnerabilityListViewComponent Vulnerabilities="VulnerabilitiesForTodayOrEarlier" />
+
+    </Authorized>
+    <NotAuthorized>
+        <br />
+        <br />
+        <h3>Please register or log in use this application</h3>
+    </NotAuthorized>
+</AuthorizeView>

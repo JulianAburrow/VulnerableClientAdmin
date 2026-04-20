@@ -1,89 +1,79 @@
-namespace VulnerableClientAdminUI.Areas.Identity.Pages.Account;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+#nullable disable
 
-public class ForgotPasswordModel : PageModel
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+
+namespace VulnerableClientAdminUI.Areas.Identity.Pages.Account
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly IConfiguration _configuration;
-
-    public ForgotPasswordModel(UserManager<IdentityUser> userManager, IConfiguration configuration)
+    public class ForgotPasswordModel : PageModel
     {
-        _userManager = userManager;
-        _configuration = configuration;
-    }   
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-    [BindProperty]
-    [Required(ErrorMessage = "{0} is required")]
-    [EmailAddress]
-    [Display(Name = "Email Address")]
-    public string EmailAddress { get; set; } = string.Empty;
-
-    public void OnGet()
-    {
-    }
-
-    public async Task<IActionResult> OnPost()
-    {
-        var returnUrl = "~/Identity/Account/ForgotPasswordConfirmation";
-
-        if (!ModelState.IsValid)
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
         {
-            return Page();
+            _userManager = userManager;
+            _emailSender = emailSender;
         }
 
-        try
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [BindProperty]
+        public InputModel Input { get; set; }
+
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        public class InputModel
         {
-            var user = await _userManager.FindByNameAsync(EmailAddress);
-            if (user == null)
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
+        }
+
+        public string? DevResetLink { get; set; }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+                return Page();
+
+            var user = await _userManager.FindByEmailAsync(Input.Email);
+            if (user is null)
             {
-                return LocalRedirect(returnUrl);
+                return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
-            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetPasswordUrl = $"{Request.Host.Host}{GlobalVariables.RootUrl}/Identity/Account/ResetPassword?userid={user.Id}&code={code}";
-            var fromAddress = _configuration.GetValue<string>("Smtp:FromAddress") ?? throw new Exception("From Address is required");
-            var MailMessage = new MailMessage(
-                fromAddress,
-                EmailAddress,
-                "Reset Password",
-                "Please reset your password by clicking <a href=\"" + resetPasswordUrl + "\">here</a>")
-            {
-                IsBodyHtml = true
-            };
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // Get PickupDirectoryLocation and check that directory exists. If not, create it.
+            // DO NOT manually encode anything
+            var url = Url.Page(
+                "/Account/ResetPassword",
+                pageHandler: null,
+                values: new { area = "Identity", email = Input.Email, code = token },
+                protocol: Request.Scheme);
 
-            using (var SmtpClient = new SmtpClient())
-            {
-                SmtpClient.UseDefaultCredentials = true;
-                SmtpClient.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
-                var pickupDirectoryLocation = _configuration.GetValue<string>("Smtp:SpecifiedPickupDirectory:PickupDirectoryLocation");
-                if (pickupDirectoryLocation == null)
-                {
-                    throw new Exception("Pickup Directory cannot be null");
-                }
+            TempData["DevResetLink"] = url;
 
-                SmtpClient.PickupDirectoryLocation = pickupDirectoryLocation;
-                if (!Directory.Exists(pickupDirectoryLocation))
-                {
-                    Directory.CreateDirectory(pickupDirectoryLocation);
-                }
-                try
-                {
-                    SmtpClient.Send(MailMessage);
-                }
-                catch (Exception ex)
-                {
-                    //ex.ToExceptionless().Submit();
-                }
-            }
-
-            return LocalRedirect(returnUrl);
+            return RedirectToPage("./ForgotPassword");
         }
-        catch (Exception ex)
-        {
-            //ex.ToExceptionless().Submit();
-        }
-
-        return LocalRedirect(returnUrl);
     }
 }

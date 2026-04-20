@@ -25,7 +25,7 @@ public class CDOutcomeHandler : ICDOutcomeHandler
             .OrderByDescending(a => a.ChangedDate)
             .Where(a =>
                 a.ObjectType == "VulnerabilityInformationModel" &&
-                a.ObjectId == vulnerablityInformationId &&
+                a.ObjectId == vulnerablityInformationId.ToString() &&
                 ColumnNames.Contains(a.ColumnName))
             .Select(a => a.ChangedDate)
             .First();
@@ -42,7 +42,7 @@ public class CDOutcomeHandler : ICDOutcomeHandler
             .Join(
                 _context.VulnerabilityInformation,
                 aom => aom.ObjectId,
-                vim => vim.VulnerabilityInformationId,
+                vim => vim.VulnerabilityInformationId.ToString(),
                 (aom, vim) => new { VulnerabilityInformationModel = vim, AuditObjectModel = aom })
             .Join(
                 _context.VulnerableClients,
@@ -61,13 +61,13 @@ public class CDOutcomeHandler : ICDOutcomeHandler
             })
             .OrderByDescending(a => a.EvaluationDate);
 
-        if (startDate != null)
+        if (startDate is not null)
         {
             outcomes = (IOrderedQueryable<CDOutcomeModel>)outcomes.Where(o =>
                 o.EvaluationDate >= startDate);
         }
 
-        if (endDate != null)
+        if (endDate is not null)
         {
             outcomes = (IOrderedQueryable<CDOutcomeModel>)outcomes.Where(o =>
                 o.EvaluationDate <= endDate);

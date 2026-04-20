@@ -1,5 +1,28 @@
 ﻿@page
-@attribute [IgnoreAntiforgeryToken]
 @model VulnerableClientAdminUI.Areas.Identity.Pages.Account.LogoutModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject IHttpContextAccessor HttpContextAccessor
+
 @{
+    ViewData["Title"] = "Log out";
 }
+
+<header>
+    <h1>@ViewData["Title"]</h1>
+    @{
+        if (User.Identity?.IsAuthenticated ?? false)
+        {
+            var tokens = Antiforgery.GetAndStoreTokens(HttpContextAccessor.HttpContext);
+
+            <form method="post" action="/Identity/Account/Logout">
+                <input type="hidden" name="__RequestVerificationToken" value="@tokens.RequestToken" />
+                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
+            </form>
+
+        }
+        else
+        {
+            <p>You have successfully logged out of the application.</p>
+        }
+    }
+</header>

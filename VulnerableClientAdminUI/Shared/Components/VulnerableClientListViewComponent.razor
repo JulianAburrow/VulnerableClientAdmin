@@ -29,9 +29,9 @@
         <MudTd>@context.Title</MudTd>
         <MudTd>@context.FirstName</MudTd>
         <MudTd>@context.Surname</MudTd>
-        <MudTd>@(context.DateOfBirth != null ? context.DateOfBirth.Value.ToString("dd/MM/yyyy") : "N/A")</MudTd>
+        <MudTd>@(context.DateOfBirth is not null ? context.DateOfBirth.Value.ToString("dd/MM/yyyy") : "N/A")</MudTd>
         <MudTd>
-            @if (context.VulnerabilityInformation != null)
+            @if (context.VulnerabilityInformation is not null)
         {
             <a class="btn btn-primary" href="vulnerabilityinformation/summary/@context.ContactId">Summary</a>
             @:&nbsp;

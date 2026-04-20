@@ -17,10 +17,20 @@ public partial class MainLayout
         _drawerOpen = !_drawerOpen;
     }
 
+    private bool _hasRendered;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+            _hasRendered = true;
+    }
+
     public void SetHeaderValue(string headerValue)
     {
         HeaderValue = headerValue;
-        StateHasChanged();
+
+        if (_hasRendered)
+            InvokeAsync(StateHasChanged);
     }
 
     private async Task SavePage()
@@ -39,9 +49,8 @@ public partial class MainLayout
             await SavedPageHandler.CreateSavedPageAsync(savedPage, true);
             Snackbar.Add("Page successfully saved", Severity.Success);
         }
-        catch (Exception ex)
+        catch
         {
-            //ex.ToExceptionless().Submit();
             Snackbar.Add("An error occurred saving the page. Please try again", Severity.Error);
         }        
     }

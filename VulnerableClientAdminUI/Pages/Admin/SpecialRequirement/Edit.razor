@@ -1,0 +1,35 @@
+﻿@page "/specialrequirement/edit/{SpecialRequirementId:int}"
+@inherits SpecialRequirementBasePageClass
+
+<PageTitle>Edit Special Requirement</PageTitle>
+
+<AuthorizeView Policy="AdminPolicy">
+    <Authorized>
+
+        <br />
+
+        @if (SpecialRequirementModel is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Special Requirement</MudAlert>
+            return;
+        }
+
+        @if (PreventEditing)
+        {
+            <MudAlert Severity="Severity.Warning" ContentAlignment="HorizontalAlignment.Center">
+                <h4>This Special Requirement is in use. Only the Active status and Description can be changed.</h4>
+            </MudAlert>
+        }
+
+        <br />
+
+        <EditForm Context="subcontext" Model="@SpecialRequirementDisplayModel" OnValidSubmit="@UpdateSpecialRequirement">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <SpecialRequirementCreateUpdateComponent SpecialRequirementDisplayModel="@SpecialRequirementDisplayModel" PreventEditing="@PreventEditing" />
+
+        </EditForm>
+
+    </Authorized>
+</AuthorizeView>

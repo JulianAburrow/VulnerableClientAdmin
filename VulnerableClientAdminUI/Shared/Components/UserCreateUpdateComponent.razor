@@ -1,0 +1,30 @@
+﻿<MudGrid>
+    <MudItem sm="12">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="First Name" @bind-Value="UserDisplayModel.FirstName" AutoFocus OnlyValidateIfDirty="true" Disabled="IsEdit" />
+                <MudTextField Label="Last Name" @bind-Value="UserDisplayModel.LastName" Disabled="IsEdit" />
+                <MudSelect Label="Role" T="string" @bind-Value="UserDisplayModel.Role" Disabled="PreventEditing">
+                    @foreach (var role in Roles)
+                    {
+                        <MudSelectItem Value="role">@role</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Label="Email" @bind-Value="UserDisplayModel.Email" Disabled="IsEdit" />
+                @if (!IsEdit)
+                {
+                    <MudTextField Label="Password" @bind-Value="UserDisplayModel.Password" />
+                    <MudTextField Label="Confirm Password" @bind-Value="UserDisplayModel.ConfirmPassword" />
+                }                
+            </MudCardContent>
+            <MudCardActions>
+                @if (!PreventEditing)
+                {
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    @:&nbsp;
+                }                
+                <a class="btn btn-primary" href="users/index">Cancel</a>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+</MudGrid>

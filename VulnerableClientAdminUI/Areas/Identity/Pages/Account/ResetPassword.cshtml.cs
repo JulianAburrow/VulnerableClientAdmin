@@ -1,88 +1,117 @@
-using System.Web;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+#nullable disable
 
-namespace VulnerableClientAdminUI.Areas.Identity.Pages.Account;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 
-public class ResetPasswordModel : PageModel
+namespace VulnerableClientAdminUI.Areas.Identity.Pages.Account
 {
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public ResetPasswordModel(UserManager<IdentityUser> userManager) =>
-        _userManager = userManager;
-
-    [BindProperty]
-    public ResetPasswordInputModel ResetPasswordInput { get; set; } = null!;
-
-    public class ResetPasswordInputModel
+    public class ResetPasswordModel : PageModel
     {
-        [Required(ErrorMessage = "{0} is required")]
-        [DataType(DataType.Password)]
-        [Display(Name = "New Password")]
-        public string NewPassword { get; set; } = string.Empty;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        [Required(ErrorMessage = "{0} is required")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        [Compare(nameof(NewPassword), ErrorMessage = "The password and confirmation password do not match")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-
-        [Required]
-        public string Code { get; set; } = null!;
-
-        [Required(ErrorMessage = "{0} is required")]
-        [EmailAddress]
-        [Display(Name = "Email Address")]
-        public string Email { get; set; } = null!;
-    }
-
-    public IActionResult OnGet(string? code = null)
-    {
-        if (code == null)
+        public ResetPasswordModel(UserManager<ApplicationUser> userManager)
         {
-            return BadRequest("A code must be supplied for password reset.");
+            _userManager = userManager;
         }
 
-        ResetPasswordInput = new ResetPasswordInputModel
-        {
-            Code = code,
-        };
-        return Page();        
-    }
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [BindProperty]
+        public InputModel Input { get; set; }
 
-    public async Task<IActionResult> OnPost()
-    {
-        var returnUrl = "~/Identity/Account/ResetPasswordConfirmation";
-
-        if (!ModelState.IsValid)
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        public class InputModel
         {
-            return Page();
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
+
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
+
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirm password")]
+            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }
+
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            public string Code { get; set; }
+
         }
-        try
+
+        public IActionResult OnGet(string code = null)
         {
-            var user = await _userManager.FindByEmailAsync(ResetPasswordInput.Email);
-            if (user == null)
+            if (code is null)
             {
-                return LocalRedirect(returnUrl);
+                return BadRequest("A code must be supplied for password reset.");
             }
-            
-            // It is necessary to replace " " with "+" as these get stripped out in the url...
-            var result = await _userManager.ResetPasswordAsync(user, ResetPasswordInput.Code.Replace(" ", "+"), ResetPasswordInput.NewPassword);
+            else
+            {
+                Input = new InputModel
+                {
+                    Code = code
+                };
+                return Page();
+            }
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            var user = await _userManager.FindByEmailAsync(Input.Email);
+            if (user is null)
+            {
+                // Don't reveal that the user does not exist
+                return RedirectToPage("./ResetPasswordConfirmation");
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
             if (result.Succeeded)
             {
-                return LocalRedirect(returnUrl);
+                return RedirectToPage("./ResetPasswordConfirmation");
             }
 
             foreach (var error in result.Errors)
             {
-                //new Exception(error.Description).ToExceptionless().Submit();
+                ModelState.AddModelError(string.Empty, error.Description);
             }
-
-            ViewData[CommonValues.ErrorMessage] = "An error occurred attempting to reset your password. If this persists please raise a ticket for IT.";
+            return Page();
         }
-        catch(Exception ex)
-        {
-            //ex.ToExceptionless().Submit();           
-        }
-
-        return Page();
     }
 }

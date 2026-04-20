@@ -40,7 +40,7 @@ public class SourceOfAwarenessHandler : ISourceOfAwarenessHandler
         var sourceOfAwarenessToDelete = _context.SourcesOfAwareness
             .SingleOrDefault(s =>
                 s.SourceOfAwarenessId == sourceOfAwarenessId);
-        if (sourceOfAwarenessToDelete == null)
+        if (sourceOfAwarenessToDelete is null)
             return;
 
         _context.SourcesOfAwareness.Remove(sourceOfAwarenessToDelete);
@@ -56,7 +56,7 @@ public class SourceOfAwarenessHandler : ISourceOfAwarenessHandler
     {
         var sourceOfAwarenessToUpdate = await _context.SourcesOfAwareness
             .SingleOrDefaultAsync(s => s.SourceOfAwarenessId == sourceOfAwareness.SourceOfAwarenessId);
-        if (sourceOfAwarenessToUpdate == null)
+        if (sourceOfAwarenessToUpdate is null)
             return;
 
         sourceOfAwarenessToUpdate.Source = sourceOfAwareness.Source;

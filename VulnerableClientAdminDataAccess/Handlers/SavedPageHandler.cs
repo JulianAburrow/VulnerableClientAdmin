@@ -17,7 +17,7 @@ public class SavedPageHandler : ISavedPageHandler
     public async Task DeleteSavedPage(int savePageId, bool callSaveChanges)
     {
         var savedPageToRemove = _context.SavedPages.SingleOrDefault(s => s.SavedPageId == savePageId);
-        if (savedPageToRemove == null)
+        if (savedPageToRemove is null)
             return;
 
         _context.SavedPages.Remove(savedPageToRemove);
@@ -44,7 +44,7 @@ public class SavedPageHandler : ISavedPageHandler
     {
         var savedPageToUpdate = await _context.SavedPages
             .SingleOrDefaultAsync(s => s.SavedPageId == savedPage.SavedPageId);
-        if (savedPageToUpdate == null)
+        if (savedPageToUpdate is null)
             return;
 
         savedPageToUpdate.Title = savedPage.Title;

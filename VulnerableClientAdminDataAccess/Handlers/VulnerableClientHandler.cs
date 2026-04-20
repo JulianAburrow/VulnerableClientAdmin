@@ -38,7 +38,7 @@ public class VulnerableClientHandler : IVulnerableClientHandler
     {
         var vulnerableClientToUpdate = await _context.VulnerableClients
             .SingleOrDefaultAsync(v => v.ContactId == vulnerableClient.ContactId);
-        if (vulnerableClientToUpdate == null)
+        if (vulnerableClientToUpdate is null)
             return;
 
         vulnerableClientToUpdate.VulnerabilityStatusId = vulnerableClient.VulnerabilityStatusId;

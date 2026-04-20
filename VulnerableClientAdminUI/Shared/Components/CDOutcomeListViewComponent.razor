@@ -43,7 +43,7 @@
             <MudTd>@subcontext.FirstName</MudTd>
             <MudTd>@subcontext.LastName</MudTd>
         }
-        <MudTd>@SharedMethods.SplitPascalCaseStrings(subcontext.ColumnName)</MudTd>
+        <MudTd>@CSVMethods.SplitPascalCaseStrings(subcontext.ColumnName)</MudTd>
         <MudTd>@subcontext.Outcome</MudTd>
         <MudTd>@subcontext.EvaluationDate.ToString("dd/MM/yyyy h:mm tt")</MudTd>
         <MudTd>@subcontext.CompletedBy</MudTd>

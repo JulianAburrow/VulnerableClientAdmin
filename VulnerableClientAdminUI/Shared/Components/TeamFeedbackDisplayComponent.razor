@@ -6,13 +6,12 @@
                 <MudField Label="Date">@TeamFeedbackModel.FeedbackDate.ToString("dd/MM/yyyy h:mm tt")</MudField>
             </MudCardContent>
             <MudCardActions>
-                
-            @* <AuthorizeView Roles="@RoleNames.SuperUserOnly">
-                <Authorized> *@
-                    <a class="btn btn-primary" href="teamfeedback/edit/@TeamFeedbackModel.TeamFeedbackId">Edit</a>
-                    &nbsp;
-                @* </Authorized>
-            </AuthorizeView> *@
+                <AuthorizeView Policy="ElevatedPolicy">
+                    <Authorized>
+                        <a class="btn btn-primary" href="teamfeedback/edit/@TeamFeedbackModel.TeamFeedbackId">Edit</a>
+                        &nbsp;
+                    </Authorized>
+                </AuthorizeView>
             <a class="btn btn-primary" href="teamfeedbacks/@TeamFeedbackModel.VulnerabilityInformationId/index">Back to list</a>
             </MudCardActions>
         </MudCard>

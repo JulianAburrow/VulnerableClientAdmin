@@ -6,40 +6,26 @@
 <MudSnackbarProvider />
 
 <PageTitle>Vulnerability Manager</PageTitle>
-<CascadingValue Value="this">
-    <MudLayout>
-        <MudAppBar Elevation="1">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
-            <MudSpacer />
-            <HeaderValueComponent HeaderValue="@HeaderValue" />
-            @* <div style="margin-right: 100px; width: 600px">
-                <LoginDisplayComponent />
-            </div> *@
-            @* <AuthorizeView Roles="@RoleNames.UserAndSuperUser">
-                <Authorized> *@
-                    <a class="btn btn-light" @onclick="SavePage" style="cursor: pointer">Save Link To Page</a>
-                @* </Authorized>
-            </AuthorizeView> *@
-        </MudAppBar>
-        <MudDrawer @bind-Open="@_drawerOpen">
-            <NavMenu />
-        </MudDrawer>
-        <MudMainContent>
-            <MudContainer MaxWidth="MaxWidth.Large">
-                @* <AuthorizeView Roles="@RoleNames.UserAndSuperUser">
-                    <Authorized> *@
-                        @Body
-                    @* </Authorized>
-                    <NotAuthorized>
-                        <h1>Registered With Vulnerable Client Admin</h1>
-                        <p>
-                            You are registered with the Vulnerable Client Admin application but have
-                            not yet been assigned any roles. Please contact your line manager and ask them to
-                            raise a ticket for IT specifying the role required.
-                        </p>
-                    </NotAuthorized>
-                </AuthorizeView> *@
-            </MudContainer>
-        </MudMainContent>
-    </MudLayout>
-</CascadingValue>
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
+        <MudSpacer />
+        <HeaderValueComponent HeaderValue="@HeaderValue" />
+        <div style="margin-right: 100px; width: 600px">
+            <LoginDisplayComponent />
+        </div>
+        <AuthorizeView Policy="AllRolesPolicy">
+            <Authorized>
+                <a class="btn btn-light" @onclick="SavePage" style="cursor: pointer">Save Link To Page</a>
+            </Authorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
