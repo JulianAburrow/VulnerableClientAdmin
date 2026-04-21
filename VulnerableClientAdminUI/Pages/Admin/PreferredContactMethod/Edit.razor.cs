@@ -6,6 +6,12 @@ public partial class Edit
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         PreferredContactMethodModel = await PreferredContactMethodHandler.GetPreferredContactMethodAsync(PreferredContactMethodId);
         PreferredContactMethodDisplayModel.Method = PreferredContactMethodModel.Method;
         PreferredContactMethodDisplayModel.MethodActive = PreferredContactMethodModel.MethodActive;
@@ -14,7 +20,7 @@ public partial class Edit
         // Is this PreferredContactMethod in use?
         PreventEditing = PreferredContactMethodModel.Vulnerabilities.Any();
 
-        MainLayout.SetHeaderValue($"Edit Preferred Contact Method '{PreferredContactMethodDisplayModel.Method}'");
+        MainLayout.SetHeaderValue($"Edit Preferred Contact Method {PreferredContactMethodModel.Method}");
     }
 
     private async Task UpdatePreferredContactMethod()

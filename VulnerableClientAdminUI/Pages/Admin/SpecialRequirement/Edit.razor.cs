@@ -6,6 +6,12 @@ public partial class Edit
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         SpecialRequirementModel = await SpecialRequirementHandler.GetSpecialRequirementAsync(SpecialRequirementId);
         SpecialRequirementDisplayModel.Requirement = SpecialRequirementModel.Requirement;
         SpecialRequirementDisplayModel.RequirementActive = SpecialRequirementModel.RequirementActive;
@@ -13,7 +19,7 @@ public partial class Edit
 
         PreventEditing = SpecialRequirementModel.Vulnerabilities.Any();
 
-        MainLayout.SetHeaderValue($"Edit Special Requirement '{SpecialRequirementModel.Requirement}'");
+        MainLayout.SetHeaderValue($"Edit Special Requirement {SpecialRequirementModel.Requirement}");
     }
 
     private async Task UpdateSpecialRequirement()

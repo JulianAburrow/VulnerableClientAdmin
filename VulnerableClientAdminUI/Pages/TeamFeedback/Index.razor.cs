@@ -14,6 +14,7 @@ public partial class Index
         ContactId = VulnerabilityInformationHandler.GetContactIdFromVulnerabilityInformationId(VulnerabilityInformationId);
         Snackbar.Add($"{TeamFeedbacks.Count} {(TeamFeedbacks.Count == 1 ? "team feedback found" : "team feedbacks found")}",
             TeamFeedbacks.Count == 0 ? Severity.Error : Severity.Success);
+
         if (TeamFeedbacks.Count == 0)
         {
             MainLayout.SetHeaderValue("No Feedback found");

@@ -10,7 +10,7 @@ public partial class Edit
         SavedPageDisplayModel.Notes = SavedPageModel.Notes;
         SavedPageDisplayModel.IsExternal = SavedPageModel.IsExternal;
 
-        MainLayout.SetHeaderValue($"Edit Saved Page {SavedPageModel.Title}.");
+        MainLayout.SetHeaderValue($"Edit Saved Page {SavedPageModel.Title}");
     }
 
     private async Task UpdateSavedPage()

@@ -23,7 +23,7 @@ public partial class Index
             FirstName = "All",
             LastName = string.Empty,
         });
-        MainLayout.SetHeaderValue("CD Outcome Menu");
+        MainLayout.SetHeaderValue("CD Outcomes");
     }
 
     private void ShowHideSearchBox()

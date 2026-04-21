@@ -7,8 +7,9 @@ public partial class Index
     protected override async Task OnInitializedAsync()
     {
         VulnerabilitiesForTodayOrEarlier = await VulnerabilityInformationHandler.GetVulnerabilitiesForTodayOrEarlier(DateTime.Now);
-        MainLayout.SetHeaderValue("Vulnerabilities For Today And Earlier");       
-    }
+
+        MainLayout.SetHeaderValue("Vulnerabilities for today and earlier");
+    }    
 
     private async void ExportCSV()
     {

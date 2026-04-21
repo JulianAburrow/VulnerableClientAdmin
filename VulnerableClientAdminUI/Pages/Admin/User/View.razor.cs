@@ -4,10 +4,15 @@ public partial class View
 {
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         User = await UserManager.FindByIdAsync(Id);
         User.Role = (await UserManager.GetRolesAsync(User)).FirstOrDefault() ?? string.Empty;
         AuditObjects = await AuditObjectHandler.GetAuditRecordsForObjectAsync(Enums.ObjectType.ApplicationUser.ToString(), Id);
-        MainLayout.SetHeaderValue($"View User '{User?.FirstName} {User?.LastName}'");
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var principal = authState.User;
@@ -15,5 +20,7 @@ public partial class View
         CurrentUser = await UserManager.GetUserAsync(principal);
 
         PreventDeleting = User.Id == CurrentUser.Id;
+
+        MainLayout.SetHeaderValue($"View User {User.FirstName} {User.LastName}");
     }
 }

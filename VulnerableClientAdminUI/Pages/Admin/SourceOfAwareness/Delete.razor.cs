@@ -4,10 +4,17 @@ public partial class Delete
 {
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         SourceOfAwarenessModel = await SourceOfAwarenessHandler.GetSourceOfAwarenessAsync(SourceOfAwarenessId);
         // Is this SourceOfAwareness in use?
         PreventDeleting = SourceOfAwarenessModel.Vulnerabilities.Any();
-        MainLayout.SetHeaderValue($"Delete Source Of Awareness '{SourceOfAwarenessModel.Source}'");
+
+        MainLayout.SetHeaderValue($"Delete Source Of Awareness {SourceOfAwarenessModel.Source}");
     }
 
     private async Task DeleteSourceOfAwareness()

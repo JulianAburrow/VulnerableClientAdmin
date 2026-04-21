@@ -6,7 +6,9 @@
 <MudSnackbarProvider />
 
 <PageTitle>Vulnerability Manager</PageTitle>
-<MudLayout>
+
+<CascadingValue Value="this">
+    <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
         <MudSpacer />
@@ -29,3 +31,4 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
+</CascadingValue>

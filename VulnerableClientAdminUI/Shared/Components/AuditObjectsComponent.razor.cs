@@ -4,7 +4,7 @@ public partial class AuditObjectsComponent
 {
     [Parameter] public List<AuditObjectModel> AuditObjectList { get; set; } = null!;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         // TLDR; this method must be present and empty to maintain the header value
         // set by the conaining page

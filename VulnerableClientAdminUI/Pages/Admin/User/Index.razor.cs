@@ -8,6 +8,12 @@ public partial class Index
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var principal = authState.User;
 
@@ -25,7 +31,8 @@ public partial class Index
         var userCount = Users.Count;
         Snackbar.Add(userCount == 1 ? $"{userCount} user found" : $"{userCount} users found",
             userCount == 0 ? Severity.Error : Severity.Success);
-        MainLayout.SetHeaderValue("Users");
         AuditObjects = await AuditObjectHandler.GetAuditRecordsAsync(Enums.ObjectType.ApplicationUser.ToString());
+
+        MainLayout.SetHeaderValue("Users");
     }
 }

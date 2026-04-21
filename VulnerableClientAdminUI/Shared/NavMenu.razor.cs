@@ -10,7 +10,7 @@ public partial class NavMenu
 
     private int InactiveVulnerabilityCount { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ActiveVulnerabilityCount = VulnerabilityInformationHandler.GetActiveVulnerabilitiesCount();
         InactiveVulnerabilityCount = VulnerabilityInformationHandler.GetInactiveVulnerabilitiesCount();

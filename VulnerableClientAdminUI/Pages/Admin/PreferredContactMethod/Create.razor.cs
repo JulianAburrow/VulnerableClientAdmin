@@ -2,8 +2,14 @@
 
 public partial class Create
 {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         PreferredContactMethodDisplayModel.MethodActive = true;
         MainLayout.SetHeaderValue("Create Preferred Contact Method");
     }

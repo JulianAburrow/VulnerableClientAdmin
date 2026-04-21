@@ -6,9 +6,14 @@ public partial class Edit
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         User = await UserManager.FindByIdAsync(Id);
         User.Role = (await UserManager.GetRolesAsync(User)).FirstOrDefault() ?? "None";
-        MainLayout.SetHeaderValue($"Edit User {User.FirstName} {User.LastName}");
 
         Roles = await RoleManager.Roles
             .Select(r => r.Name)
@@ -28,6 +33,8 @@ public partial class Edit
         UserDisplayModel.LastName = User.LastName;
         UserDisplayModel.Email = User.Email;
         UserDisplayModel.Role = User.Role;
+
+        MainLayout.SetHeaderValue($"Edit User {User.FirstName} {User.LastName}");
     }
 
     private async Task UpdateUser()

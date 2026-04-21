@@ -4,6 +4,12 @@ public partial class Create
 {
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         Roles = await RoleManager.Roles
             .Select(r => r.Name)
             .ToListAsync();

@@ -6,6 +6,12 @@ public partial class Index
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         SpecialRequirements = await SpecialRequirementHandler.GetAllSpecialRequirementsAsync();
         var specialRequirementCount = SpecialRequirements.Count;
         Snackbar.Add(specialRequirementCount == 1
@@ -13,7 +19,8 @@ public partial class Index
             : $"{specialRequirementCount} special requirements found",
             specialRequirementCount == 0 ? Severity.Error : Severity.Success);
 
-        MainLayout.SetHeaderValue("Special Requirements");
         AuditObjects = await AuditObjectHandler.GetAuditRecordsAsync(Enums.ObjectType.SpecialRequirementModel.ToString());
+
+        MainLayout.SetHeaderValue("Special Requirements");
     }
 }

@@ -6,6 +6,12 @@ public partial class Index
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         SourcesOfAwareness = await SourceOfAwarenessHandler.GetAllSourcesOfAwarenessAsync();
         var sourcesOfAwarenessCount = SourcesOfAwareness.Count;
         Snackbar.Add(sourcesOfAwarenessCount == 1
@@ -13,7 +19,8 @@ public partial class Index
             : $"{sourcesOfAwarenessCount} sources of awareness found",
             sourcesOfAwarenessCount == 0 ? Severity.Error : Severity.Success);
 
-        MainLayout.SetHeaderValue("Sources Of Awareness");
         AuditObjects = await AuditObjectHandler.GetAuditRecordsAsync(Enums.ObjectType.SourceOfAwarenessModel.ToString());
+
+        MainLayout.SetHeaderValue("Sources Of Awareness");
     }
 }

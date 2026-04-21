@@ -2,11 +2,18 @@
 
 public partial class Create
 {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         SpecialRequirementDisplayModel.RequirementActive = true;
+
         MainLayout.SetHeaderValue("Create Special Requirement");
-    }   
+    }
 
     private async Task CreateSpecialRequirement()
     {

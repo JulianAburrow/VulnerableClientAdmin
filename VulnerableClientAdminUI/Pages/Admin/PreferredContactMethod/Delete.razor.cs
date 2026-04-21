@@ -4,9 +4,16 @@ public partial class Delete
 {
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         PreferredContactMethodModel = await PreferredContactMethodHandler.GetPreferredContactMethodAsync(PreferredContactMethodId);
         // Is this PreferredContactMethod in use?
         PreventDeleting = PreferredContactMethodModel.Vulnerabilities.Any();
+
         MainLayout.SetHeaderValue($"Delete Preferred Contact Method {PreferredContactMethodModel.Method}");
     }
 

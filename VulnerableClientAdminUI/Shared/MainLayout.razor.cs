@@ -17,21 +17,12 @@ public partial class MainLayout
         _drawerOpen = !_drawerOpen;
     }
 
-    private bool _hasRendered;
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-            _hasRendered = true;
-    }
-
     public void SetHeaderValue(string headerValue)
     {
         HeaderValue = headerValue;
-
-        if (_hasRendered)
-            InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
+
 
     private async Task SavePage()
     {

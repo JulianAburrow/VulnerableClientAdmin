@@ -1,10 +1,12 @@
 ﻿global using Microsoft.AspNetCore.Components;
+global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.JSInterop;
 global using MudBlazor;
 global using MudBlazor.Services;
 global using System.ComponentModel.DataAnnotations;
+global using System.Security.Claims;
 global using System.Text;
 global using System.Text.RegularExpressions;
 global using VulnerableClientAdminDataAccess;
@@ -19,4 +21,5 @@ global using VulnerableClientAdminUI.Shared;
 global using VulnerableClientAdminUI.Shared.BasePageClasses;
 global using VulnerableClientAdminUI.Shared.CommonValues;
 global using VulnerableClientAdminUI.Shared.Methods;
+global using VulnerableClientAdminUI.Shared.Services;
 global using VulnerableClientAdminUI.Validators;

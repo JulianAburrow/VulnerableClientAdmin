@@ -26,8 +26,14 @@ public partial class Search
 
     private bool WarningLabelIsHidden = true;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         SearchObjects.Add(SelectValues.PleaseSelectValue.ToString(), SelectValues.PleaseSelectText);
         var itemValues = new string[] { "Preferred Contact Method", "Source Of Awareness", "Special Requirement", "Vulnerability Information", "Vulnerability Reason" };
         foreach (var objectType in itemValues)
@@ -37,6 +43,7 @@ public partial class Search
         ObjectTypesByObject.Add(SelectValues.PleaseSelectValue, SelectValues.PleaseSelectText);
         ObjectType = SelectValues.PleaseSelectText;
         ObjectId = SelectValues.PleaseSelectValue;
+
         MainLayout.SetHeaderValue("Search Audit Records");
     }
 

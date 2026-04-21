@@ -6,6 +6,12 @@ public partial class Edit
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await AppAuthorizationService.UserIsAdminAsync())
+        {
+            Snackbar.Add("You are not authorised to view this page.", Severity.Error);
+            return;
+        }
+
         SourceOfAwarenessModel = await SourceOfAwarenessHandler.GetSourceOfAwarenessAsync(SourceOfAwarenessId);
         SourceOfAwarenessDisplayModel.Source = SourceOfAwarenessModel.Source;
         SourceOfAwarenessDisplayModel.SourceActive = SourceOfAwarenessModel.SourceActive;
@@ -14,7 +20,7 @@ public partial class Edit
         // Is this SourceOfAwareness in use?
         PreventEditing = SourceOfAwarenessModel.Vulnerabilities.Any();
 
-        MainLayout.SetHeaderValue($"Edit Source Of Awareness '{SourceOfAwarenessDisplayModel.Source}'");
+        MainLayout.SetHeaderValue($"Edit Source Of Awareness {SourceOfAwarenessModel.Source}");
     }
 
     private async Task UpdateSourceOfAwareness()

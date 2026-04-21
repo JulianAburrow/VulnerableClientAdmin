@@ -6,7 +6,7 @@ public partial class App
 
     private string ReturnUrl { get; set; } = default!;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ReturnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
     }

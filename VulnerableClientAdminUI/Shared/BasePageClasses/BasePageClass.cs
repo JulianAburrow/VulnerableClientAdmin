@@ -1,6 +1,6 @@
 ﻿namespace VulnerableClientAdminUI.Shared.BasePageClasses;
 
-public class BasePageClass : ComponentBase
+public abstract class BasePageClass : ComponentBase
 {
     [Inject] protected NavigationManager NavigationManager { get; set; } = null!;
 
@@ -9,6 +9,8 @@ public class BasePageClass : ComponentBase
     [Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
 
     [Inject] protected IAuditObjectHandler AuditObjectHandler { get; set; } = null!;
+
+    [Inject] protected IAppAuthorizationService AppAuthorizationService { get; set; } = null!;
 
     public List<AuditObjectModel> AuditObjects { get; set; } = null!;
 
@@ -19,9 +21,4 @@ public class BasePageClass : ComponentBase
     protected string DownloadFile = "downloadFile";
 
     [CascadingParameter] public MainLayout MainLayout { get; set; } = new();
-
-    protected override void OnInitialized()
-    {
-        MainLayout.SetHeaderValue(string.Empty);
-    }
 }

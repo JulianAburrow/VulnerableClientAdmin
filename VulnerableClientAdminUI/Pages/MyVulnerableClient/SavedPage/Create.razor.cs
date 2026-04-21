@@ -1,9 +1,11 @@
 ﻿namespace VulnerableClientAdminUI.Pages.MyVulnerableClient.SavedPage;
 
 public partial class Create
-{
-    protected override void OnInitialized() =>
+{    
+    protected override async Task OnInitializedAsync()
+    {
         MainLayout.SetHeaderValue("Create Saved Page");
+    }
 
     private async Task CreateSavedPage()
     {

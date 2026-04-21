@@ -30,11 +30,11 @@ builder.Services.AddAuthorizationBuilder()
             RoleNames.UserRoleName,
             RoleNames.SuperUserRoleName,
             RoleNames.AdminRoleName))
-    .AddPolicy("ElevatedPolicy", policy =>
+    .AddPolicy("ElevatedRolesPolicy", policy =>
         policy.RequireRole(
             RoleNames.SuperUserRoleName,
             RoleNames.AdminRoleName))
-    .AddPolicy("AdminPolicy", policy =>
+    .AddPolicy("AdminRolePolicy", policy =>
         policy.RequireRole(RoleNames.AdminRoleName));
 
 var app = builder.Build();

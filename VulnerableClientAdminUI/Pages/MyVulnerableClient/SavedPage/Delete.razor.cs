@@ -2,11 +2,13 @@
 
 public partial class Delete
 {
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         SavedPageModel = await SavedPageHandler.GetSavedPageAsync(SavedPageId);
-        MainLayout.SetHeaderValue($"Delete Saved Page '{SavedPageModel.Title}'");
+
+        MainLayout.SetHeaderValue($"Delete Saved Page {SavedPageModel.Title}");
     }
+
     private async Task DeleteSavedPage()
     {
         try

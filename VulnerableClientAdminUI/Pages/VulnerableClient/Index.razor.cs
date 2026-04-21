@@ -12,7 +12,16 @@ public partial class Index
             ? $"{vulnerableClientCount} vulnerable client found"
             : $"{vulnerableClientCount} vulnerable clients found",
             vulnerableClientCount == 0 ? Severity.Error : Severity.Success);
+
         MainLayout.SetHeaderValue("Vulnerable Clients");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            
+        }
     }
 
     private async void ExportCSV()
