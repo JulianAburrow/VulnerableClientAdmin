@@ -14,7 +14,7 @@ public class SavedPageHandler : ISavedPageHandler
             await SaveChangesAsync();
     }
 
-    public async Task DeleteSavedPage(int savePageId, bool callSaveChanges)
+    public async Task DeleteSavedPageAsync(int savePageId, bool callSaveChanges)
     {
         var savedPageToRemove = _context.SavedPages.SingleOrDefault(s => s.SavedPageId == savePageId);
         if (savedPageToRemove is null)
