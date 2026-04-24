@@ -1,8 +1,6 @@
-﻿using VulnerableClientAdminDataAccess.Models;
+﻿namespace VulnerableClientAdminTest;
 
-namespace VulnerableClientAdminTest;
-
-public class SpecialRequirementHandlerTest
+public class SpecialRequirementHandlerTest : TestBase
 {
     private readonly VulnerableClientAdminContext _context;
     private readonly ISpecialRequirementHandler _specialRequirementHandler;
@@ -12,7 +10,7 @@ public class SpecialRequirementHandlerTest
         var options = new DbContextOptionsBuilder<VulnerableClientAdminContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
-        _context = new VulnerableClientAdminContext(options);
+        _context = CreateContext();
         _specialRequirementHandler = new SpecialRequirementHandler(_context);
     }
 
@@ -68,6 +66,16 @@ public class SpecialRequirementHandlerTest
         await _specialRequirementHandler.CreateSpecialRequirementAsync(SpecialRequirementModel4, true);
 
         _context.SpecialRequirements.Count().Should().Be(intialCount + 4);
+    }
+
+    [Fact]
+    public async Task DeleteSpecialRequirementDeletesSpecialRequirement()
+    {
+        _context.SpecialRequirements.Add(SpecialRequirementModel1);
+        _context.SaveChanges();
+        var initialCount = _context.SpecialRequirements.Count();
+        await _specialRequirementHandler.DeleteSpecialRequirementAsync(SpecialRequirementModel1.SpecialRequirementId, true);
+        _context.SpecialRequirements.Count().Should().Be(initialCount - 1);
     }
 
     [Fact]

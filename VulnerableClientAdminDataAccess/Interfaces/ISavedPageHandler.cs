@@ -6,7 +6,7 @@ public interface ISavedPageHandler
 
     Task UpdateSavedPageAsync(SavedPageModel savedPage, bool callSaveChanges);
 
-    Task DeleteSavedPage(int savePageId, bool callSaveChanges);
+    Task DeleteSavedPageAsync(int savePageId, bool callSaveChanges);
 
     Task<SavedPageModel> GetSavedPageAsync(int savedPageId);
 

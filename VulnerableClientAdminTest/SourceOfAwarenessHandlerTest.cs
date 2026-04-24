@@ -1,8 +1,6 @@
-﻿using VulnerableClientAdminDataAccess.Models;
+﻿namespace VulnerableClientAdminTest;
 
-namespace VulnerableClientAdminTest;
-
-public class SourceOfAwarenessHandlerTest
+public class SourceOfAwarenessHandlerTest : TestBase
 {
     private readonly VulnerableClientAdminContext _context;
     private readonly ISourceOfAwarenessHandler _sourceOfAwarenessHandler;
@@ -12,7 +10,7 @@ public class SourceOfAwarenessHandlerTest
         var options = new DbContextOptionsBuilder<VulnerableClientAdminContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
-        _context = new VulnerableClientAdminContext(options);
+        _context = CreateContext();
         _sourceOfAwarenessHandler = new SourceOfAwarenessHandler(_context);
     }
 
@@ -68,6 +66,16 @@ public class SourceOfAwarenessHandlerTest
         await _sourceOfAwarenessHandler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel4, true);
 
         _context.SourcesOfAwareness.Count().Should().Be(initialCount + 4);
+    }
+
+    [Fact]
+    public async Task DeleteSourceOfAwarenessDeletesSourceOfAwareness()
+    {
+        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel1);
+        _context.SaveChanges();
+        var sourceOfAwareness = _context.SourcesOfAwareness.First(s => s.SourceOfAwarenessId == SourceOfAwarenessModel1.SourceOfAwarenessId);
+        await _sourceOfAwarenessHandler.DeleteSourceOfAwarenessAsync(sourceOfAwareness.SourceOfAwarenessId, true);
+        _context.SourcesOfAwareness.Count(s => s.SourceOfAwarenessId == SourceOfAwarenessModel1.SourceOfAwarenessId).Should().Be(0);
     }
 
     [Fact]

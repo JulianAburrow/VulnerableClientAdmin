@@ -1,6 +1,6 @@
 ﻿namespace VulnerableClientAdminTest;
 
-public class PreferredContactMethodHandlerTest
+public class PreferredContactMethodHandlerTest : TestBase
 {
     private readonly VulnerableClientAdminContext _context;
     private readonly IPreferredContactMethodHandler _preferredContactMethodHandler;
@@ -10,7 +10,7 @@ public class PreferredContactMethodHandlerTest
         var options = new DbContextOptionsBuilder<VulnerableClientAdminContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
-        _context = new VulnerableClientAdminContext(options);
+        _context = CreateContext();
         _preferredContactMethodHandler = new PreferredContactMethodHandler(_context);
     }
 
@@ -66,6 +66,15 @@ public class PreferredContactMethodHandlerTest
         await _preferredContactMethodHandler.CreatePreferredContactMethodAsync(PreferredContactMethodModel4, true);
 
         _context.PreferredContactMethods.Count().Should().Be(initialCount + 4);
+    }
+
+    [Fact]
+    public async Task DeletePreferredContactMethodDeletesPreferredContactMethod()
+    {
+        _context.PreferredContactMethods.Add(PreferredContactMethodModel1);
+        _context.SaveChanges();
+        await _preferredContactMethodHandler.DeletePreferredContactMethodAsync(PreferredContactMethodModel1.PreferredContactMethodId, true);
+        _context.PreferredContactMethods.Count(p => p.PreferredContactMethodId == PreferredContactMethodModel1.PreferredContactMethodId).Should().Be(0);
     }
 
     [Fact]
