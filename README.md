@@ -2,6 +2,8 @@
 
 A Blazor Server application designed to support FCA‑aligned Vulnerability Assessments with explicit workflows, predictable behaviour, and a clean, maintainable architecture.
 
+This repository is provided for portfolio and evaluation purposes only. It is not licensed for production or commercial use.
+
 ---
 
 ## Overview
