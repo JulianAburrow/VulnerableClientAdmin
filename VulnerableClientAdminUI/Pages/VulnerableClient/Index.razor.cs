@@ -16,14 +16,6 @@ public partial class Index
         MainLayout.SetHeaderValue("Vulnerable Clients");
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            
-        }
-    }
-
     private async void ExportCSV()
     {
         var csvString = CSVStrings.CreateVulnerableClientsCSVString(VulnerableClients.Where(v => v.VulnerabilityInformation is not null).ToList());

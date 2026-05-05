@@ -1,9 +1,13 @@
+using QuestPDF.Infrastructure;
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json")
     .Build();
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()

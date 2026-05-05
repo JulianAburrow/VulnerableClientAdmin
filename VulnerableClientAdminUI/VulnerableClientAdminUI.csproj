@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net10.0-windows7.0</TargetFramework>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Configurations>Debug;Release;Debug_T1;Debug_T2</Configurations>
 	</PropertyGroup>
@@ -20,13 +20,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.6">
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MudBlazor" Version="9.3.0" />
+		<PackageReference Include="MudBlazor" Version="9.4.0" />
+		<PackageReference Include="QuestPDF" Version="2026.2.4" />
 	</ItemGroup>
 
 	<ItemGroup>
