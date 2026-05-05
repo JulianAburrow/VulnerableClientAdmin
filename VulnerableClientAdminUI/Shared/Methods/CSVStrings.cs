@@ -205,4 +205,130 @@ public static class CSVStrings
 
         return vulnerabilityStatusComparisonSB.ToString();
     }
+
+    public static string CreateSARCSVString(VulnerabilityInformationModel v)
+    {
+        var sarSb = new StringBuilder();
+
+        // ============================================================
+        // SECTION 1 — CONTACT SUMMARY
+        // ============================================================
+        sarSb.AppendLine("CONTACT SUMMARY");
+        sarSb.AppendLine($"First Name,{v.Contact.FirstName}");
+        sarSb.AppendLine($"Last Name,{v.Contact.Surname}");
+        sarSb.AppendLine($"Date of Birth,{v.Contact.DateOfBirth?.ToString("dd/MM/yyyy")}");
+        sarSb.AppendLine($"Gender,{v.Contact.Gender}");
+        sarSb.AppendLine($"Is Inferred,{v.IsInferred}");
+        sarSb.AppendLine($"Date No Longer Considered Vulnerable,{v.DateNoLongerConsideredVulnerable?.ToString("dd/MM/yyyy") ?? "Case still open"}");
+        sarSb.AppendLine();
+        sarSb.AppendLine();
+
+        // ============================================================
+        // SECTION 2 — VULNERABILITY INFORMATION (scalar fields)
+        // ============================================================
+        sarSb.AppendLine("VULNERABILITY INFORMATION");
+        sarSb.AppendLine($"Statement and Comments,{v.StatementAndComments}");
+        sarSb.AppendLine($"Sign-Off Notes,{v.VulnerabilitySignOffNotes}");
+        sarSb.AppendLine($"Third Party Contact,{v.ThirdPartyContact}");
+        sarSb.AppendLine($"Preferred Contact Details,{v.PreferredContactDetails}");
+        sarSb.AppendLine($"Complaint Made?,{v.VulnerableClientHasMadeComplaint}");
+        sarSb.AppendLine($"Complaint Outcome,{v.ComplaintOutcome}");
+        sarSb.AppendLine($"Monitoring Need,{v.ClientRequirementMonitoringNeed}");
+        sarSb.AppendLine($"Required Action By Company,{v.RequiredActionByCompany}");
+        sarSb.AppendLine($"Next Action Responsibility,{v.ResponsibilityOfCompletionOfNextAction}");
+        sarSb.AppendLine($"Completion Date Of Associated Task,{v.CompletionDateOfAssociatedTask?.ToString("dd/MM/yyyy")}");
+        sarSb.AppendLine($"Date Of Next Review,{v.DateOfNextReview?.ToString("dd/MM/yyyy")}");
+        sarSb.AppendLine($"Diary Date,{v.DiaryDate?.ToString("dd/MM/yyyy")}");
+        sarSb.AppendLine();
+        sarSb.AppendLine();
+
+        // ============================================================
+        // SECTION 3 — NAVIGATION OBJECTS
+        // ============================================================
+        sarSb.AppendLine("NAVIGATION OBJECTS");
+        sarSb.AppendLine($"Source Of Awareness,{v.SourceOfAwareness?.Description}");
+        sarSb.AppendLine($"Preferred Contact Method,{v.PreferredContactMethod?.Description}");
+        sarSb.AppendLine($"Special Requirement,{v.SpecialRequirement?.Description}");
+        sarSb.AppendLine($"Special Requirement Notes,{v.SpecialRequirementNotes}");
+        sarSb.AppendLine();
+        sarSb.AppendLine();
+
+        // ============================================================
+        // SECTION 4 — CONSUMER DUTY OUTCOMES
+        // ============================================================
+        sarSb.AppendLine("CONSUMER DUTY OUTCOMES");
+        sarSb.AppendLine($"Understanding Needs (Good),{v.CDOutcomeUnderstandingNeedsGoodOutcomes}");
+        sarSb.AppendLine($"Understanding Needs (Bad),{v.CDOutcomeUnderstandingNeedsBadOutcomes}");
+        sarSb.AppendLine($"Staff Skills (Good),{v.CDOutcomeStaffSkillsAndCapabilityGoodOutcomes}");
+        sarSb.AppendLine($"Staff Skills (Bad),{v.CDOutcomeStaffSkillsAndCapabilityBadOutcomes}");
+        sarSb.AppendLine($"Practical Actions (Good),{v.CDOutcomeTakingPracticalActionsGoodOutcomes}");
+        sarSb.AppendLine($"Practical Actions (Bad),{v.CDOutcomeTakingPracticalActionsBadOutcomes}");
+        sarSb.AppendLine($"Monitoring & Evaluation (Good),{v.CDOutcomeMonitoringAndEvaluationGoodOutcomes}");
+        sarSb.AppendLine($"Monitoring & Evaluation (Bad),{v.CDOutcomeMonitoringAndEvaluationBadOutcomes}");
+        sarSb.AppendLine();
+        sarSb.AppendLine();
+
+        // ============================================================
+        // SECTION 5 — VULNERABILITIES TABLE
+        // ============================================================
+        sarSb.AppendLine("VULNERABILITIES");
+        sarSb.AppendLine("Reason,Explanation,Date Added,Permanent,Date Removed");
+
+        foreach (var item in v.Vulnerabilities)
+        {
+            sarSb.AppendLine(
+                $"{item.VulnerabilityReason?.Description}," +
+                $"{item.Explanation}," +
+                $"{item.VulnerabilityDateAdded.ToString("dd/MM/yyyy")}," +
+                $"{item.IsPermanent}," +
+                $"{item.VulnerabilityDateRemoved?.ToString("dd/MM/yyyy")}"
+            );
+        }
+
+        sarSb.AppendLine();
+        sarSb.AppendLine();
+
+        // ============================================================
+        // SECTION 6 — NOTES TABLE
+        // ============================================================
+        sarSb.AppendLine("NOTES");
+        sarSb.AppendLine("Note,Date");
+
+        foreach (var note in v.VulnerabilityNotes)
+        {
+            sarSb.AppendLine(
+                $"{note.Note}," +
+                $"{note.NoteDate.ToString("dd/MM/yyyy")}"
+            );
+        }
+
+        sarSb.AppendLine();
+        sarSb.AppendLine();
+
+        // ============================================================
+        // SECTION 7 — TEAM FEEDBACK TABLE
+        // ============================================================
+        sarSb.AppendLine("TEAM FEEDBACK");
+        sarSb.AppendLine("Feedback,Date");
+
+        foreach (var fb in v.TeamFeedbacks)
+        {
+            sarSb.AppendLine(
+                $"{fb.Feedback}," +
+                $"{fb.FeedbackDate.ToString("dd/MM/yyyy")}"
+            );
+        }
+
+        sarSb.AppendLine();
+        sarSb.AppendLine();
+
+        // ============================================================
+        // SECTION 8 — AUDIT FIELDS
+        // ============================================================
+        sarSb.AppendLine("AUDIT");
+        sarSb.AppendLine($"Date Created,{v.DateCreated.ToString("dd/MM/yyyy HH:mm")}");
+        sarSb.AppendLine($"Date Last Updated,{v.DateLastUpdated.ToString("dd/MM/yyyy HH:mm")}");
+
+        return sarSb.ToString();
+    }
 }
