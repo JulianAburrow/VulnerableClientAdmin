@@ -14,13 +14,17 @@ public class TeamFeedbackHandlerTest : TestBase
     private TeamFeedbackModel CreateFeedback(
         int viId,
         string feedback,
-        DateTime date)
+        DateTime date,
+        string createdBy,
+        string lastUpdatedBy)
     {
         return new TeamFeedbackModel
         {
             VulnerabilityInformationId = viId,
             Feedback = feedback,
-            FeedbackDate = date
+            FeedbackDate = date,
+            CreatedBy = createdBy,
+            LastUpdatedBy = lastUpdatedBy,
         };
     }
 
@@ -33,7 +37,7 @@ public class TeamFeedbackHandlerTest : TestBase
     {
         var initialCount = _context.TeamFeedbacks.Count();
 
-        var feedback = CreateFeedback(100, "Good work", DateTime.Now);
+        var feedback = CreateFeedback(100, "Good work", DateTime.Now, "UnitTest", "UnitTest");
 
         await _teamFeedbackHandler.CreateTeamFeedbackAsync(feedback, true);
 
@@ -47,7 +51,7 @@ public class TeamFeedbackHandlerTest : TestBase
     [Fact]
     public async Task GetTeamFeedbackGetsTeamFeedback()
     {
-        var feedback = CreateFeedback(100, "Initial feedback", DateTime.Now);
+        var feedback = CreateFeedback(100, "Initial feedback", DateTime.Now, "UnitTest", "UnitTest");
 
         _context.TeamFeedbacks.Add(feedback);
         _context.SaveChanges();
@@ -80,13 +84,17 @@ public class TeamFeedbackHandlerTest : TestBase
         var vi = new VulnerabilityInformationModel
         {
             VulnerabilityInformationId = 300,
-            ContactId = 200
+            ContactId = 200,
+            RequiredActionByCompany = "",
+            ClientRequirementMonitoringNeed = "",
+            CreatedBy = "UnitTest",
+            LastUpdatedBy = "UnitTest"
         };
         _context.VulnerabilityInformation.Add(vi);
 
         // Seed feedback entries
-        var f1 = CreateFeedback(300, "Old feedback", DateTime.Now.AddDays(-2));
-        var f2 = CreateFeedback(300, "New feedback", DateTime.Now);
+        var f1 = CreateFeedback(300, "Old feedback", DateTime.Now.AddDays(-2), "UnitTest", "UnitTest");
+        var f2 = CreateFeedback(300, "New feedback", DateTime.Now, "UnitTest", "UnitTest");
 
         _context.TeamFeedbacks.Add(f1);
         _context.TeamFeedbacks.Add(f2);
@@ -107,7 +115,7 @@ public class TeamFeedbackHandlerTest : TestBase
     [Fact]
     public async Task UpdateTeamFeedbackUpdatesTeamFeedback()
     {
-        var feedback = CreateFeedback(400, "Original", DateTime.Now);
+        var feedback = CreateFeedback(400, "Original", DateTime.Now, "UnitTest", "UnitTest");
 
         _context.TeamFeedbacks.Add(feedback);
         _context.SaveChanges();
@@ -117,7 +125,9 @@ public class TeamFeedbackHandlerTest : TestBase
             TeamFeedbackId = feedback.TeamFeedbackId,
             VulnerabilityInformationId = 400,
             Feedback = "Updated feedback",
-            FeedbackDate = feedback.FeedbackDate
+            FeedbackDate = feedback.FeedbackDate,
+            CreatedBy = "UnitTest",
+            LastUpdatedBy = "UnitTest"
         };
 
         await _teamFeedbackHandler.UpdateTeamFeedbackAsync(updated, true);
