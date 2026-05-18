@@ -8,6 +8,7 @@ public class VulnerableClientAdminContext : IdentityDbContext<ApplicationUser>
     : base(options)
     {
         // Used only for tests
+        _httpContextAccessor = null!;
     }
 
 
@@ -117,11 +118,11 @@ public class VulnerableClientAdminContext : IdentityDbContext<ApplicationUser>
 
                 var AuditObject = new AuditObjectModel
                 {
-                    ObjectId = objectId.ToString(),
-                    ObjectType = objectType,
+                    ObjectId = objectId?.ToString() ?? string.Empty,
+                    ObjectType = objectType ?? string.Empty,
                     ColumnName = property.Metadata.Name,
-                    PreviousValue = property.OriginalValue is not null ? property.OriginalValue.ToString() : string.Empty,
-                    NewValue = property.CurrentValue is not null ? property.CurrentValue.ToString() : string.Empty,
+                    PreviousValue = property.OriginalValue?.ToString() ?? string.Empty,
+                    NewValue = property.CurrentValue?.ToString() ?? string.Empty,
                     ChangedDate = changedDate,
                     ChangedBy = CurrentUserName,
                 };
