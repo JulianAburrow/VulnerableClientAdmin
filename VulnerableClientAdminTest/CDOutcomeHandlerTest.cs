@@ -25,7 +25,11 @@ public class CDOutcomeHandlerTest : TestBase
         var vi = new VulnerabilityInformationModel
         {
             VulnerabilityInformationId = 200,
-            ContactId = 100
+            ContactId = 100,
+            ClientRequirementMonitoringNeed = "",
+            RequiredActionByCompany = "",
+            CreatedBy = "UnitTest",
+            LastUpdatedBy = "UnitTest"
         };
         _context.VulnerabilityInformation.Add(vi);
 
@@ -83,8 +87,13 @@ public class CDOutcomeHandlerTest : TestBase
         var vi = new VulnerabilityInformationModel
         {
             VulnerabilityInformationId = 300,
-            ContactId = 101
+            ContactId = 101,
+            ClientRequirementMonitoringNeed = "",
+            RequiredActionByCompany = "",
+            CreatedBy = "UnitTest",
+            LastUpdatedBy = "UnitTest"
         };
+
         _context.VulnerabilityInformation.Add(vi);
 
         var oldAudit = new AuditObjectModel
@@ -92,6 +101,7 @@ public class CDOutcomeHandlerTest : TestBase
             ObjectId = "300",
             ObjectType = "VulnerabilityInformationModel",
             ColumnName = "CDOutcomeUnderstandingNeedsGoodOutcomes",
+            PreviousValue = "",
             NewValue = "OldOutcome",
             ChangedBy = "UnitTestUser",
             ChangedDate = DateTime.Now.AddMonths(-2)
@@ -102,6 +112,7 @@ public class CDOutcomeHandlerTest : TestBase
             ObjectId = "300",
             ObjectType = "VulnerabilityInformationModel",
             ColumnName = "CDOutcomeUnderstandingNeedsGoodOutcomes",
+            PreviousValue = "",
             NewValue = "NewOutcome",
             ChangedBy = "UnitTestUser",
             ChangedDate = DateTime.Now
@@ -141,13 +152,21 @@ public class CDOutcomeHandlerTest : TestBase
         var vi1 = new VulnerabilityInformationModel
         {
             VulnerabilityInformationId = 400,
-            ContactId = 102
+            ContactId = 102,
+            ClientRequirementMonitoringNeed = "",
+            RequiredActionByCompany = "",
+            CreatedBy = "UnitTest",
+            LastUpdatedBy = "UnitTest"
         };
 
         var vi2 = new VulnerabilityInformationModel
         {
             VulnerabilityInformationId = 401,
-            ContactId = 103
+            ContactId = 103,
+            ClientRequirementMonitoringNeed = "",
+            RequiredActionByCompany = "",
+            CreatedBy = "UnitTest",
+            LastUpdatedBy = "UnitTest"
         };
 
         _context.VulnerabilityInformation.AddRange(vi1, vi2);
@@ -157,6 +176,7 @@ public class CDOutcomeHandlerTest : TestBase
             ObjectId = "400",
             ObjectType = "VulnerabilityInformationModel",
             ColumnName = "CDOutcomeMonitoringAndEvaluationGoodOutcomes",
+            PreviousValue = "",
             NewValue = "Outcome1",
             ChangedBy = "UnitTestUser",
             ChangedDate = DateTime.Now
@@ -167,6 +187,7 @@ public class CDOutcomeHandlerTest : TestBase
             ObjectId = "401",
             ObjectType = "VulnerabilityInformationModel",
             ColumnName = "CDOutcomeMonitoringAndEvaluationGoodOutcomes",
+            PreviousValue = "",
             NewValue = "Outcome2",
             ChangedBy = "UnitTestUser",
             ChangedDate = DateTime.Now
@@ -180,5 +201,4 @@ public class CDOutcomeHandlerTest : TestBase
         outcomes.Count.Should().Be(1);
         outcomes.First().Outcome.Should().Be("Outcome1");
     }
-
 }
