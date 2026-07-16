@@ -1,19 +1,7 @@
 ﻿namespace VulnerableClientAdminTest;
 
-public class PreferredContactMethodHandlerTest : TestBase
+public class PreferredContactMethodHandlerTest
 {
-    private readonly VulnerableClientAdminContext _context;
-    private readonly IPreferredContactMethodHandler _preferredContactMethodHandler;
-
-    public PreferredContactMethodHandlerTest()
-    {
-        var options = new DbContextOptionsBuilder<VulnerableClientAdminContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
-        _context = CreateContext();
-        _preferredContactMethodHandler = new PreferredContactMethodHandler(_context);
-    }
-
     private readonly PreferredContactMethodModel PreferredContactMethodModel1 = new()
     {
         Method = "Method1",
@@ -58,62 +46,118 @@ public class PreferredContactMethodHandlerTest : TestBase
     [Fact]
     public async Task CreatePreferredContactMethodCreatesPreferredContactMethod()
     {
-        var initialCount = _context.PreferredContactMethods.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new PreferredContactMethodHandler(factory);
 
-        await _preferredContactMethodHandler.CreatePreferredContactMethodAsync(PreferredContactMethodModel1, false);
-        await _preferredContactMethodHandler.CreatePreferredContactMethodAsync(PreferredContactMethodModel2, false);
-        await _preferredContactMethodHandler.CreatePreferredContactMethodAsync(PreferredContactMethodModel3, false);
-        await _preferredContactMethodHandler.CreatePreferredContactMethodAsync(PreferredContactMethodModel4, true);
+        // Seed nothing — handler will insert
 
-        _context.PreferredContactMethods.Count().Should().Be(initialCount + 4);
+        await handler.CreatePreferredContactMethodAsync(PreferredContactMethodModel1);
+        await handler.CreatePreferredContactMethodAsync(PreferredContactMethodModel2);
+        await handler.CreatePreferredContactMethodAsync(PreferredContactMethodModel3);
+        await handler.CreatePreferredContactMethodAsync(PreferredContactMethodModel4);
+
+        // Assert using a *fresh* context
+        using var assertContext = factory.CreateDbContext();
+
+        assertContext.PreferredContactMethods.Count().Should().Be(4);
     }
 
     [Fact]
     public async Task DeletePreferredContactMethodDeletesPreferredContactMethod()
     {
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel1);
-        _context.SaveChanges();
-        await _preferredContactMethodHandler.DeletePreferredContactMethodAsync(PreferredContactMethodModel1.PreferredContactMethodId, true);
-        _context.PreferredContactMethods.Count(p => p.PreferredContactMethodId == PreferredContactMethodModel1.PreferredContactMethodId).Should().Be(0);
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new PreferredContactMethodHandler(factory);
+
+        // Seed using seedContext
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.PreferredContactMethods.Add(PreferredContactMethodModel1);
+            seedContext.SaveChanges();
+        }
+
+        // Act
+        await handler.DeletePreferredContactMethodAsync(PreferredContactMethodModel1.PreferredContactMethodId);
+
+        // Assert using a fresh context
+        using var assertContext = factory.CreateDbContext();
+        assertContext.PreferredContactMethods
+            .Count(p => p.PreferredContactMethodId == PreferredContactMethodModel1.PreferredContactMethodId)
+            .Should().Be(0);
     }
 
     [Fact]
     public async Task GetActivePreferredContactMethodsGetsActivePreferredContactMethods()
     {
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel1);
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel2);
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel3);
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel4);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new PreferredContactMethodHandler(factory);
 
-        var activePreferredContactMethods = await _preferredContactMethodHandler.GetActivePreferredContactMethodsAsync();
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.PreferredContactMethods.AddRange(
+                PreferredContactMethodModel1,
+                PreferredContactMethodModel2,
+                PreferredContactMethodModel3,
+                PreferredContactMethodModel4
+            );
+            seedContext.SaveChanges();
+        }
 
-        activePreferredContactMethods.Count.Should().Be(_context.PreferredContactMethods.Where(p => p.MethodActive).Count());
+        var activePreferredContactMethods = await handler.GetActivePreferredContactMethodsAsync();
+
+        using var assertContext = factory.CreateDbContext();
+        var expectedCount = assertContext
+            .PreferredContactMethods
+            .Count(p => p.MethodActive);
+
+        activePreferredContactMethods.Count.Should().Be(expectedCount);
     }
 
     [Fact]
     public async Task GetAllPreferredContactMethodsGetsAllPreferredContactMethods()
     {
-        var initialCount = _context.PreferredContactMethods.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new PreferredContactMethodHandler(factory);
 
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel1);
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel2);
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel3);
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel4);
-        _context.SaveChanges();
+        // Get initial count using a fresh context
+        using var initialContext = factory.CreateDbContext();
+        var initialCount = initialContext.PreferredContactMethods.Count();
 
-        var preferredContactMethods = await _preferredContactMethodHandler.GetAllPreferredContactMethodsAsync();
+        // Seed using a fresh context
+        using var seedContext = factory.CreateDbContext();
 
+        seedContext.PreferredContactMethods.AddRange(
+            PreferredContactMethodModel1,
+            PreferredContactMethodModel2,
+            PreferredContactMethodModel3,
+            PreferredContactMethodModel4
+        );
+            seedContext.SaveChanges();
+
+        // Act
+        var preferredContactMethods = await handler.GetAllPreferredContactMethodsAsync();
+
+        // Assert
         preferredContactMethods.Count.Should().Be(initialCount + 4);
     }
 
     [Fact]
     public async Task GetPreferredContactMethodGetsPreferredContactMethod()
     {
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel1);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new PreferredContactMethodHandler(factory);
 
-        var returnedPreferredContactMethod = await _preferredContactMethodHandler.GetPreferredContactMethodAsync(PreferredContactMethodModel1.PreferredContactMethodId);
+        // Seed using a fresh context
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.PreferredContactMethods.Add(PreferredContactMethodModel1);
+            seedContext.SaveChanges();
+        }
+
+        // Act
+        var returnedPreferredContactMethod =
+            await handler.GetPreferredContactMethodAsync(PreferredContactMethodModel1.PreferredContactMethodId);
+
+        // Assert
         returnedPreferredContactMethod.Should().NotBeNull();
         returnedPreferredContactMethod.Method.Should().Be(PreferredContactMethodModel1.Method);
         returnedPreferredContactMethod.Description.Should().Be(PreferredContactMethodModel1.Description);
@@ -123,22 +167,41 @@ public class PreferredContactMethodHandlerTest : TestBase
     [Fact]
     public async Task UpdatePreferredContactMethodUpdatesPreferredContactMethod()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new PreferredContactMethodHandler(factory);
+
+        // Seed using a fresh context
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.PreferredContactMethods.Add(PreferredContactMethodModel4);
+            seedContext.SaveChanges();
+        }
+
+        // Modify the model (detached from EF)
         var method = "MethodX";
         var description = "DescriptionX";
         var methodActive = true;
 
-        _context.PreferredContactMethods.Add(PreferredContactMethodModel4);
-        _context.SaveChanges();
+        var updatedModel = new PreferredContactMethodModel
+        {
+            PreferredContactMethodId = PreferredContactMethodModel4.PreferredContactMethodId,
+            Method = method,
+            Description = description,
+            MethodActive = methodActive
+        };
 
-        var preferredContactMethod = _context.PreferredContactMethods.First(p => p.PreferredContactMethodId == PreferredContactMethodModel4.PreferredContactMethodId);
-        preferredContactMethod.Method = method;
-        preferredContactMethod.Description = description;
-        preferredContactMethod.MethodActive = methodActive;
+        // Act
+        await handler.UpdatePreferredContactMethodAsync(updatedModel);
 
-        await _preferredContactMethodHandler.UpdatePreferredContactMethodAsync(preferredContactMethod, true);
+        // Assert using a fresh context
+        using var assertContext = factory.CreateDbContext();
+        var updatedPreferredContactMethod =
+            assertContext.PreferredContactMethods.First(p =>
+                p.PreferredContactMethodId == PreferredContactMethodModel4.PreferredContactMethodId);
 
-        var updatedPreferredContactMethod = _context.PreferredContactMethods.First(p => p.PreferredContactMethodId == PreferredContactMethodModel4.PreferredContactMethodId);
         updatedPreferredContactMethod.Method.Should().Be(method);
+        updatedPreferredContactMethod.Description.Should().Be(description);
         updatedPreferredContactMethod.MethodActive.Should().Be(methodActive);
     }
+
 }

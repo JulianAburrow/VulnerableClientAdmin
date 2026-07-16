@@ -2,5 +2,5 @@
 
 public interface ICDOutcomeHandler
 {
-    List<CDOutcomeModel> GetCDOutcomes(DateTime? startDate = null, DateTime? endDate = null, int? vulnerabilityInformationId = null);
+    Task<List<CDOutcomeModel>> GetCDOutcomesAsync(DateTime? startDate = null, DateTime? endDate = null, int? vulnerabilityInformationId = null);
 }

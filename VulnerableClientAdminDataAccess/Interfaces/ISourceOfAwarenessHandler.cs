@@ -8,11 +8,9 @@ public interface ISourceOfAwarenessHandler
 
     Task<List<SourceOfAwarenessModel>> GetAllSourcesOfAwarenessAsync();
 
-    Task UpdateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness, bool callSaveChanges);
+    Task UpdateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness);
 
-    Task CreateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness, bool callSaveChanges);
+    Task CreateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness);
 
-    Task DeleteSourceOfAwarenessAsync(int sourceOfAwarenessId, bool callSaveChanges);
-
-    Task SaveChangesAsync();
+    Task DeleteSourceOfAwarenessAsync(int sourceOfAwarenessId);
 }

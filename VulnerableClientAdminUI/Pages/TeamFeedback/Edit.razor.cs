@@ -17,7 +17,7 @@ public partial class Edit
 
         try
         {
-            await TeamFeedbackHandler.UpdateTeamFeedbackAsync(TeamFeedbackModel, true);
+            await TeamFeedbackHandler.UpdateTeamFeedbackAsync(TeamFeedbackModel);
             Snackbar.Add("Team Feedback successfully updated.", Severity.Success);
             NavigationManager.NavigateTo($"teamfeedbacks/{TeamFeedbackModel.VulnerabilityInformationId}/index");
         }

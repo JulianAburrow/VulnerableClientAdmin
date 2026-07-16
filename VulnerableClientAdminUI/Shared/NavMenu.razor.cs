@@ -12,8 +12,8 @@ public partial class NavMenu
 
     protected override async Task OnInitializedAsync()
     {
-        ActiveVulnerabilityCount = VulnerabilityInformationHandler.GetActiveVulnerabilitiesCount();
-        InactiveVulnerabilityCount = VulnerabilityInformationHandler.GetInactiveVulnerabilitiesCount();
+        ActiveVulnerabilityCount = await VulnerabilityInformationHandler.GetActiveVulnerabilitiesCountAsync();
+        InactiveVulnerabilityCount = await VulnerabilityInformationHandler.GetInactiveVulnerabilitiesCountAsync();
     }
 
     private void DoNavigation(int caseState)

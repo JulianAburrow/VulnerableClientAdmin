@@ -21,7 +21,7 @@ public partial class Create
 
         try
         {
-            await SpecialRequirementHandler.CreateSpecialRequirementAsync(SpecialRequirementModel, true);
+            await SpecialRequirementHandler.CreateSpecialRequirementAsync(SpecialRequirementModel);
             Snackbar.Add($"Special Requirement {SpecialRequirementModel.Requirement} successfully created.", Severity.Success);
             NavigationManager.NavigateTo("specialrequirements/index");
         }

@@ -21,7 +21,7 @@ public partial class Create
 
         try
         {
-            await SourceOfAwarenessHandler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel, true);
+            await SourceOfAwarenessHandler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel);
             Snackbar.Add($"Source Of Awareness {SourceOfAwarenessModel.Source} successfully created.", Severity.Success);
             NavigationManager.NavigateTo("sourcesofawareness/index");
         }

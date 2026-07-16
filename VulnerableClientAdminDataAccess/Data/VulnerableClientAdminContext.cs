@@ -4,12 +4,12 @@ public class VulnerableClientAdminContext : IdentityDbContext<ApplicationUser>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public VulnerableClientAdminContext(DbContextOptions<VulnerableClientAdminContext> options)
-    : base(options)
-    {
-        // Used only for tests
-        _httpContextAccessor = null!;
-    }
+    //public VulnerableClientAdminContext(DbContextOptions<VulnerableClientAdminContext> options)
+    //: base(options)
+    //{
+    //    // Used only for tests
+    //    _httpContextAccessor = null!;
+    //}
 
 
     public VulnerableClientAdminContext(DbContextOptions<VulnerableClientAdminContext> options,

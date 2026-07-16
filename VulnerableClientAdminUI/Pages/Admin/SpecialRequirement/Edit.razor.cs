@@ -28,7 +28,7 @@ public partial class Edit
 
         try
         {
-            await SpecialRequirementHandler.UpdateSpecialRequirementAsync(SpecialRequirementModel, true);
+            await SpecialRequirementHandler.UpdateSpecialRequirementAsync(SpecialRequirementModel);
             Snackbar.Add($"Special Requirement {SpecialRequirementModel.Requirement} successfully updated.", Severity.Success);
             NavigationManager.NavigateTo("specialrequirements/index");
         }

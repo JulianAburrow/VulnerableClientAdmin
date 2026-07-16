@@ -4,13 +4,11 @@ public interface IVulnerableClientHandler
 {
     Task<List<VulnerableClientModel>> GetVulnerableClientsAsync();
 
-    VulnerableClientModel GetVulnerableClient(int contactId);
+    Task<VulnerableClientModel> GetVulnerableClientAsync(int contactId);
 
     Task<List<VulnerableClientModel>> GetClientsByContactIdAsync(int contactId);
 
-    Task UpdateVulnerableClientAsync(VulnerableClientModel vulnerableClient, bool callSaveChanges);
+    Task UpdateVulnerableClientAsync(VulnerableClientModel vulnerableClient);
 
     Task<List<VulnerableClientNameOnlyModel>> GetVulnerableClientsNameOnlyAsync();
-
-    Task SaveChangesAsync();
 }

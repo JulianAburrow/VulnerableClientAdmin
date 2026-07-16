@@ -1,26 +1,21 @@
 ﻿namespace VulnerableClientAdminTest;
 
-public class CDOutcomeHandlerTest : TestBase
+public class CDOutcomeHandlerTest
 {
-    private readonly VulnerableClientAdminContext _context;
-    private readonly ICDOutcomeHandler _cdOutcomeHandler;
-
-    public CDOutcomeHandlerTest()
-    {
-        _context = CreateContext();
-        _cdOutcomeHandler = new CDOutcomeHandler(_context);
-    }
-
     [Fact]
-    public void GetCDOutcomesReturnsExpectedResults()
+    public async Task GetCDOutcomesReturnsExpectedResults()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new CDOutcomeHandler(factory);
+
         var client = new VulnerableClientModel
         {
             ContactId = 100,
             FirstName = "Alice",
             Surname = "Smith"
         };
-        _context.VulnerableClients.Add(client);
+        using var seedContext = factory.CreateDbContext();
+        seedContext.VulnerableClients.Add(client);
 
         var vi = new VulnerabilityInformationModel
         {
@@ -31,7 +26,7 @@ public class CDOutcomeHandlerTest : TestBase
             CreatedBy = "UnitTest",
             LastUpdatedBy = "UnitTest"
         };
-        _context.VulnerabilityInformation.Add(vi);
+        seedContext.VulnerabilityInformation.Add(vi);
 
         var audit1 = new AuditObjectModel
         {
@@ -55,12 +50,12 @@ public class CDOutcomeHandlerTest : TestBase
             ChangedDate = DateTime.Now
         };
 
-        _context.AuditObjects.Add(audit1);
-        _context.AuditObjects.Add(audit2);
+        seedContext.AuditObjects.Add(audit1);
+        seedContext.AuditObjects.Add(audit2);
 
-        _context.SaveChanges();
+        seedContext.SaveChanges();
 
-        var outcomes = _cdOutcomeHandler.GetCDOutcomes();
+        var outcomes = await handler.GetCDOutcomesAsync();
 
         outcomes.Count.Should().Be(2);
 
@@ -74,15 +69,21 @@ public class CDOutcomeHandlerTest : TestBase
     }
 
     [Fact]
-    public void GetCDOutcomesFiltersByDateRange()
+    public async Task GetCDOutcomesFiltersByDateRange()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new CDOutcomeHandler(factory);
+
         var client = new VulnerableClientModel
         {
             ContactId = 101,
             FirstName = "Bob",
             Surname = "Jones"
         };
-        _context.VulnerableClients.Add(client);
+
+        using var seedContext = factory.CreateDbContext();
+
+        seedContext.VulnerableClients.Add(client);
 
         var vi = new VulnerabilityInformationModel
         {
@@ -94,7 +95,7 @@ public class CDOutcomeHandlerTest : TestBase
             LastUpdatedBy = "UnitTest"
         };
 
-        _context.VulnerabilityInformation.Add(vi);
+        seedContext.VulnerabilityInformation.Add(vi);
 
         var oldAudit = new AuditObjectModel
         {
@@ -118,21 +119,24 @@ public class CDOutcomeHandlerTest : TestBase
             ChangedDate = DateTime.Now
         };
 
-        _context.AuditObjects.Add(oldAudit);
-        _context.AuditObjects.Add(newAudit);
-        _context.SaveChanges();
+        seedContext.AuditObjects.Add(oldAudit);
+        seedContext.AuditObjects.Add(newAudit);
+        seedContext.SaveChanges();
 
         var start = DateTime.Now.AddMonths(-1);
 
-        var outcomes = _cdOutcomeHandler.GetCDOutcomes(startDate: start);
+        var outcomes = await handler.GetCDOutcomesAsync(startDate: start);
 
         outcomes.Count.Should().Be(1);
         outcomes.First().Outcome.Should().Be("NewOutcome");
     }
 
     [Fact]
-    public void GetCDOutcomesFiltersByVulnerabilityInformationId()
+    public async Task GetCDOutcomesFiltersByVulnerabilityInformationId()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new CDOutcomeHandler(factory);
+
         var client1 = new VulnerableClientModel
         {
             ContactId = 102,
@@ -147,7 +151,8 @@ public class CDOutcomeHandlerTest : TestBase
             Surname = "Brown"
         };
 
-        _context.VulnerableClients.AddRange(client1, client2);
+        using var seedContext = factory.CreateDbContext();
+        seedContext.VulnerableClients.AddRange(client1, client2);
 
         var vi1 = new VulnerabilityInformationModel
         {
@@ -169,7 +174,7 @@ public class CDOutcomeHandlerTest : TestBase
             LastUpdatedBy = "UnitTest"
         };
 
-        _context.VulnerabilityInformation.AddRange(vi1, vi2);
+        seedContext.VulnerabilityInformation.AddRange(vi1, vi2);
 
         var audit1 = new AuditObjectModel
         {
@@ -193,10 +198,10 @@ public class CDOutcomeHandlerTest : TestBase
             ChangedDate = DateTime.Now
         };
 
-        _context.AuditObjects.AddRange(audit1, audit2);
-        _context.SaveChanges();
+        seedContext.AuditObjects.AddRange(audit1, audit2);
+        seedContext.SaveChanges();
 
-        var outcomes = _cdOutcomeHandler.GetCDOutcomes(vulnerabilityInformationId: 400);
+        var outcomes = await handler.GetCDOutcomesAsync(vulnerabilityInformationId: 400);
 
         outcomes.Count.Should().Be(1);
         outcomes.First().Outcome.Should().Be("Outcome1");

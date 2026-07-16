@@ -1,48 +1,50 @@
 ﻿namespace VulnerableClientAdminDataAccess.Handlers;
 
-public class SavedPageHandler : ISavedPageHandler
+public class SavedPageHandler(IDbContextFactory<VulnerableClientAdminContext> factory) : ISavedPageHandler
 {
-    private readonly VulnerableClientAdminContext _context;
-
-    public SavedPageHandler(VulnerableClientAdminContext context) =>
-        _context = context;
-
-    public async Task CreateSavedPageAsync(SavedPageModel savedPage, bool callSaveChanges)
+    public async Task CreateSavedPageAsync(SavedPageModel savedPage)
     {
-        _context.SavedPages.Add(savedPage);
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await using var context = await factory.CreateDbContextAsync();
+        context.SavedPages.Add(savedPage);
+        await context.SaveChangesAsync();
     }
 
-    public async Task DeleteSavedPageAsync(int savePageId, bool callSaveChanges)
+    public async Task DeleteSavedPageAsync(int savePageId)
     {
-        var savedPageToRemove = _context.SavedPages.SingleOrDefault(s => s.SavedPageId == savePageId);
+        await using var context = await factory.CreateDbContextAsync();
+        var savedPageToRemove = await context.SavedPages.SingleOrDefaultAsync(s => s.SavedPageId == savePageId);
         if (savedPageToRemove is null)
             return;
 
-        _context.SavedPages.Remove(savedPageToRemove);
+        context.SavedPages.Remove(savedPageToRemove);
 
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
-    public async Task<SavedPageModel> GetSavedPageAsync(int savedPageId) =>
-        await _context.SavedPages
+    public async Task<SavedPageModel> GetSavedPageAsync(int savedPageId)
+    {
+        await using var context = await factory.CreateDbContextAsync();
+
+        var savedPage =await context.SavedPages
             .AsNoTracking()
             .SingleOrDefaultAsync(s => s.SavedPageId == savedPageId);
 
-    public async Task<List<SavedPageModel>> GetSavedPagesByUserAsync(string userName) =>
-        await _context.SavedPages
-            .AsNoTracking()
-            .Where(S => S.Owner == userName)
-            .ToListAsync();
+        return savedPage ?? new SavedPageModel();
+    }
 
-    public async Task SaveChangesAsync() =>
-        await _context.SaveChangesAsync();
-
-    public async Task UpdateSavedPageAsync(SavedPageModel savedPage, bool callSaveChanges)
+    public async Task<List<SavedPageModel>> GetSavedPagesByUserAsync(string userName)
     {
-        var savedPageToUpdate = await _context.SavedPages
+        await using var context = await factory.CreateDbContextAsync();
+        return await context.SavedPages
+            .AsNoTracking()
+            .Where(s => s.Owner == userName)
+            .ToListAsync();
+    }
+
+    public async Task UpdateSavedPageAsync(SavedPageModel savedPage)
+    {
+        await using var context = await factory.CreateDbContextAsync();
+        var savedPageToUpdate = await context.SavedPages
             .SingleOrDefaultAsync(s => s.SavedPageId == savedPage.SavedPageId);
         if (savedPageToUpdate is null)
             return;
@@ -53,7 +55,6 @@ public class SavedPageHandler : ISavedPageHandler
         savedPageToUpdate.IsExternal = savedPage.IsExternal;
         savedPageToUpdate.Owner = savedPage.Owner;
 
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }

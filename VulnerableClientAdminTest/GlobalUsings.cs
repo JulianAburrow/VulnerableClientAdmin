@@ -5,6 +5,5 @@ global using VulnerableClientAdminDataAccess.Data;
 global using VulnerableClientAdminDataAccess.Handlers;
 global using VulnerableClientAdminDataAccess.Interfaces;
 global using VulnerableClientAdminDataAccess.Models;
-global using VulnerableClientAdminTest.BaseClass;
 global using VulnerableClientAdminTest.Helpers;
 global using Xunit;

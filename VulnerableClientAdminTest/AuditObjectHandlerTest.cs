@@ -1,16 +1,7 @@
 ﻿namespace VulnerableClientAdminTest;
 
-public class AuditObjectHandlerTest : TestBase
+public class AuditObjectHandlerTest
 {
-    private readonly VulnerableClientAdminContext _context;
-    private readonly IAuditObjectHandler _auditObjectHandler;
-
-    public AuditObjectHandlerTest()
-    {
-        _context = CreateContext();
-        _auditObjectHandler = new AuditObjectHandler(_context);
-    }
-
     private AuditObjectModel CreateAudit(
         string objectType,
         string objectId,
@@ -33,6 +24,9 @@ public class AuditObjectHandlerTest : TestBase
     [Fact]
     public async Task CreateAuditObjectCreatesAuditRecord()
     {
+        var factory= DbContextHelper.GetInMemoryFactory();
+        var handler = new AuditObjectHandler(factory);
+
         var audit = CreateAudit(
             "TestType",
             "123",
@@ -40,23 +34,29 @@ public class AuditObjectHandlerTest : TestBase
             "ValueA",
             DateTime.Now);
 
-        await _auditObjectHandler.CreateAuditObjectAsync(audit);
+        await handler.CreateAuditObjectAsync(audit);
 
-        _context.AuditObjects.Count().Should().Be(1);
-        _context.AuditObjects.First().ColumnName.Should().Be("ColumnA");
+        // Note: Since we're using an in-memory database, we need to access the context through the factory
+        using var assertContext = factory.CreateDbContext();
+        assertContext.AuditObjects.Count().Should().Be(1);
+        assertContext.AuditObjects.First().ColumnName.Should().Be("ColumnA");
     }
 
     [Fact]
     public async Task GetAuditRecordsReturnsRecordsForType()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new AuditObjectHandler(factory);
+
         var a1 = CreateAudit("TypeA", "1", "Col1", "Val1", DateTime.Now.AddDays(-2));
         var a2 = CreateAudit("TypeA", "2", "Col2", "Val2", DateTime.Now.AddDays(-1));
         var a3 = CreateAudit("TypeB", "3", "Col3", "Val3", DateTime.Now);
 
-        _context.AuditObjects.AddRange(a1, a2, a3);
-        _context.SaveChanges();
+        using var seedContext = factory.CreateDbContext();
+        seedContext.AuditObjects.AddRange(a1, a2, a3);
+        seedContext.SaveChanges();
 
-        var results = await _auditObjectHandler.GetAuditRecordsAsync("TypeA");
+        var results = await handler.GetAuditRecordsAsync("TypeA");
 
         results.Count.Should().Be(2);
         results.Should().BeInAscendingOrder(a => a.ChangedDate);
@@ -65,14 +65,18 @@ public class AuditObjectHandlerTest : TestBase
     [Fact]
     public async Task GetAuditRecordsForObjectReturnsCorrectRecords()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new AuditObjectHandler(factory);
+
         var a1 = CreateAudit("TypeA", "10", "Col1", "Val1", DateTime.Now.AddDays(-3));
         var a2 = CreateAudit("TypeA", "10", "Col2", "Val2", DateTime.Now.AddDays(-1));
         var a3 = CreateAudit("TypeA", "11", "Col3", "Val3", DateTime.Now);
 
-        _context.AuditObjects.AddRange(a1, a2, a3);
-        _context.SaveChanges();
+        using var seedContext = factory.CreateDbContext();
+        seedContext.AuditObjects.AddRange(a1, a2, a3);
+        seedContext.SaveChanges();
 
-        var results = await _auditObjectHandler.GetAuditRecordsForObjectAsync("TypeA", "10");
+        var results = await handler.GetAuditRecordsForObjectAsync("TypeA", "10");
 
         results.Count.Should().Be(2);
         results.Should().BeInAscendingOrder(a => a.ChangedDate);
@@ -82,14 +86,18 @@ public class AuditObjectHandlerTest : TestBase
     [Fact]
     public async Task GetLastAuditRecordsForObjectReturnsDescendingOrder()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new AuditObjectHandler(factory);
+
         var a1 = CreateAudit("TypeA", "20", "Col1", "Val1", DateTime.Now.AddDays(-3));
         var a2 = CreateAudit("TypeA", "20", "Col2", "Val2", DateTime.Now.AddDays(-1));
         var a3 = CreateAudit("TypeA", "20", "Col3", "Val3", DateTime.Now);
 
-        _context.AuditObjects.AddRange(a1, a2, a3);
-        _context.SaveChanges();
+        using var seedContext = factory.CreateDbContext();
+        seedContext.AuditObjects.AddRange(a1, a2, a3);
+        seedContext.SaveChanges();
 
-        var results = await _auditObjectHandler.GetLastAuditRecordsForObjectAsync("TypeA", "20");
+        var results = await handler.GetLastAuditRecordsForObjectAsync("TypeA", "20");
 
         results.Count.Should().Be(3);
         results.Should().BeInDescendingOrder(a => a.ChangedDate);

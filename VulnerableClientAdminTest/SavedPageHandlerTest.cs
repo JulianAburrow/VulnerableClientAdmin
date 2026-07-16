@@ -1,22 +1,7 @@
-﻿using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+﻿namespace VulnerableClientAdminTest;
 
-namespace VulnerableClientAdminTest;
-
-public class SavedPageHandlerTest : TestBase
+public class SavedPageHandlerTest
 {
-    private readonly VulnerableClientAdminContext _context;
-    private readonly ISavedPageHandler _savedPageHandler;
-
-    public SavedPageHandlerTest()
-    {
-        var options = new DbContextOptionsBuilder<VulnerableClientAdminContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
-
-        _context = CreateContext();
-        _savedPageHandler = new SavedPageHandler(_context);
-    }
-
     private readonly SavedPageModel SavedPageModel1 = new()
     {
         Title = "Title1",
@@ -56,25 +41,35 @@ public class SavedPageHandlerTest : TestBase
     [Fact]
     public async Task CreateSavedPageCreatesSavedPage()
     {
-        var initialCount = _context.SavedPages.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SavedPageHandler(factory);
 
-        await _savedPageHandler.CreateSavedPageAsync(SavedPageModel1, false);
-        await _savedPageHandler.CreateSavedPageAsync(SavedPageModel2, false);
-        await _savedPageHandler.CreateSavedPageAsync(SavedPageModel3, false);
-        await _savedPageHandler.CreateSavedPageAsync(SavedPageModel4, true);
+        await handler.CreateSavedPageAsync(SavedPageModel1);
+        await handler.CreateSavedPageAsync(SavedPageModel2);
+        await handler.CreateSavedPageAsync(SavedPageModel3);
+        await handler.CreateSavedPageAsync(SavedPageModel4);
 
-        _context.SavedPages.Count().Should().Be(initialCount + 4);
+        using var assertContext = factory.CreateDbContext();
+
+        assertContext.SavedPages.Count().Should().Be(4);
     }
 
     [Fact]
     public async Task DeleteSavedPageDeletesSavedPage()
     {
-        _context.SavedPages.Add(SavedPageModel1);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SavedPageHandler(factory);
 
-        await _savedPageHandler.DeleteSavedPageAsync(SavedPageModel1.SavedPageId, true);
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SavedPages.Add(SavedPageModel1);
+            seedContext.SaveChanges();
+        }
 
-        _context.SavedPages
+        await handler.DeleteSavedPageAsync(SavedPageModel1.SavedPageId);
+
+        using var assertContext = factory.CreateDbContext();
+        assertContext.SavedPages
             .Count(p => p.SavedPageId == SavedPageModel1.SavedPageId)
             .Should().Be(0);
     }
@@ -82,11 +77,17 @@ public class SavedPageHandlerTest : TestBase
     [Fact]
     public async Task GetSavedPageGetsSavedPage()
     {
-        _context.SavedPages.Add(SavedPageModel1);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SavedPageHandler(factory);
+
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SavedPages.Add(SavedPageModel1);
+            seedContext.SaveChanges();
+        }
 
         var returnedSavedPage =
-            await _savedPageHandler.GetSavedPageAsync(SavedPageModel1.SavedPageId);
+            await handler.GetSavedPageAsync(SavedPageModel1.SavedPageId);
 
         returnedSavedPage.Should().NotBeNull();
         returnedSavedPage.Title.Should().Be(SavedPageModel1.Title);
@@ -99,13 +100,19 @@ public class SavedPageHandlerTest : TestBase
     [Fact]
     public async Task GetSavedPagesByUserGetsCorrectPages()
     {
-        _context.SavedPages.Add(SavedPageModel1); // Owner: UserA
-        _context.SavedPages.Add(SavedPageModel2); // Owner: UserA
-        _context.SavedPages.Add(SavedPageModel3); // Owner: UserB
-        _context.SavedPages.Add(SavedPageModel4); // Owner: UserC
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SavedPageHandler(factory);
 
-        var userAPages = await _savedPageHandler.GetSavedPagesByUserAsync("UserA");
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SavedPages.Add(SavedPageModel1); // Owner: UserA
+            seedContext.SavedPages.Add(SavedPageModel2); // Owner: UserA
+            seedContext.SavedPages.Add(SavedPageModel3); // Owner: UserB
+            seedContext.SavedPages.Add(SavedPageModel4); // Owner: UserC
+            seedContext.SaveChanges();
+        }
+
+        var userAPages = await handler.GetSavedPagesByUserAsync("UserA");
 
         userAPages.Count.Should().Be(2);
         userAPages.All(p => p.Owner == "UserA").Should().BeTrue();
@@ -114,17 +121,23 @@ public class SavedPageHandlerTest : TestBase
     [Fact]
     public async Task UpdateSavedPageUpdatesSavedPage()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SavedPageHandler(factory);
+
         var title = "UpdatedTitle";
         var url = "https://updated.com";
         var notes = "Updated notes";
         var isExternal = true;
         var owner = "UpdatedOwner";
 
-        _context.SavedPages.Add(SavedPageModel4);
-        _context.SaveChanges();
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SavedPages.Add(SavedPageModel4);
+            seedContext.SaveChanges();
+        }
 
         var savedPage =
-            _context.SavedPages.First(p => p.SavedPageId == SavedPageModel4.SavedPageId);
+            await handler.GetSavedPageAsync(SavedPageModel4.SavedPageId);
 
         savedPage.Title = title;
         savedPage.Url = url;
@@ -132,10 +145,11 @@ public class SavedPageHandlerTest : TestBase
         savedPage.IsExternal = isExternal;
         savedPage.Owner = owner;
 
-        await _savedPageHandler.UpdateSavedPageAsync(savedPage, true);
+        await handler.UpdateSavedPageAsync(savedPage);
 
+        using var assertContext = factory.CreateDbContext();
         var updatedSavedPage =
-            _context.SavedPages.First(p => p.SavedPageId == SavedPageModel4.SavedPageId);
+            assertContext.SavedPages.First(p => p.SavedPageId == SavedPageModel4.SavedPageId);
 
         updatedSavedPage.Title.Should().Be(title);
         updatedSavedPage.Url.Should().Be(url);

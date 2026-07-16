@@ -2,15 +2,13 @@
 
 public interface ISavedPageHandler
 {
-    Task CreateSavedPageAsync(SavedPageModel savedPage, bool callSaveChanges);
+    Task CreateSavedPageAsync(SavedPageModel savedPage);
 
-    Task UpdateSavedPageAsync(SavedPageModel savedPage, bool callSaveChanges);
+    Task UpdateSavedPageAsync(SavedPageModel savedPage);
 
-    Task DeleteSavedPageAsync(int savePageId, bool callSaveChanges);
+    Task DeleteSavedPageAsync(int savePageId);
 
     Task<SavedPageModel> GetSavedPageAsync(int savedPageId);
 
     Task<List<SavedPageModel>> GetSavedPagesByUserAsync(string userName);
-
-    Task SaveChangesAsync();
 }

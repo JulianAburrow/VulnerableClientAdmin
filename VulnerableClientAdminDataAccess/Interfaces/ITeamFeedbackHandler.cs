@@ -6,9 +6,7 @@ public interface ITeamFeedbackHandler
 
     Task<List<TeamFeedbackModel>> GetTeamFeedbacksAsync(int vulnerabilityInformationId);
 
-    Task CreateTeamFeedbackAsync(TeamFeedbackModel teamFeedback, bool callSaveChanges);
+    Task CreateTeamFeedbackAsync(TeamFeedbackModel teamFeedback);
 
-    Task UpdateTeamFeedbackAsync(TeamFeedbackModel teamFeedback, bool callSaveChanges);
-
-    Task SaveChangesAsync();
+    Task UpdateTeamFeedbackAsync(TeamFeedbackModel teamFeedback);
 }

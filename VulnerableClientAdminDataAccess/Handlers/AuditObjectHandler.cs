@@ -1,37 +1,39 @@
-﻿
-namespace VulnerableClientAdminDataAccess.Handlers;
+﻿namespace VulnerableClientAdminDataAccess.Handlers;
 
-public class AuditObjectHandler : IAuditObjectHandler
+public class AuditObjectHandler(IDbContextFactory<VulnerableClientAdminContext> factory) : IAuditObjectHandler
 {
-    private readonly VulnerableClientAdminContext _context;
-
-    public AuditObjectHandler(VulnerableClientAdminContext context) =>
-        _context = context;
-
     public async Task CreateAuditObjectAsync(AuditObjectModel auditObjectModel)
     {
-        _context.AuditObjects.Add(auditObjectModel);
-        await _context.SaveChangesAsync();
+        await using var context = await factory.CreateDbContextAsync();
+        context.AuditObjects.Add(auditObjectModel);
+        await context.SaveChangesAsync();
     }
 
-    public async Task<List<AuditObjectModel>> GetAuditRecordsAsync(string objectType) =>
-        await _context.AuditObjects
+    public async Task<List<AuditObjectModel>> GetAuditRecordsAsync(string objectType)
+    {
+        await using var context = await factory.CreateDbContextAsync();
+        return await context.AuditObjects
             .AsNoTracking()
             .Where(a => a.ObjectType == objectType)
             .OrderBy(a => a.ChangedDate)
             .ToListAsync();
+    }
 
-    public async Task<List<AuditObjectModel>> GetAuditRecordsForObjectAsync(string objectType, string objectId) =>
-        await _context.AuditObjects
+    public async Task<List<AuditObjectModel>> GetAuditRecordsForObjectAsync(string objectType, string objectId)
+    {
+        await using var context = await factory.CreateDbContextAsync();
+        return await context.AuditObjects
             .AsNoTracking()
             .Where(a => a.ObjectType == objectType &&
                         a.ObjectId == objectId)
             .OrderBy(a => a.ChangedDate)    
             .ToListAsync();
+    }
 
     public async Task<List<AuditObjectModel>> GetLastAuditRecordsForObjectAsync(string objectType, string objectId)
     {
-        return await _context.AuditObjects
+        await using var context = await factory.CreateDbContextAsync();
+        return await context.AuditObjects
             .AsNoTracking()
             .Where(a => a.ObjectId == objectId.ToString() &&
                         a.ObjectType == objectType)

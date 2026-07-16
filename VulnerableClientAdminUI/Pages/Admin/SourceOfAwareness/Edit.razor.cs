@@ -29,7 +29,7 @@ public partial class Edit
 
         try
         {
-            await SourceOfAwarenessHandler.UpdateSourceOfAwarenessAsync(SourceOfAwarenessModel, true);
+            await SourceOfAwarenessHandler.UpdateSourceOfAwarenessAsync(SourceOfAwarenessModel);
             Snackbar.Add($"Source Of Awareness {SourceOfAwarenessModel.Source} successfully updated.", Severity.Success);
             NavigationManager.NavigateTo("sourcesofawareness/index");
         }
