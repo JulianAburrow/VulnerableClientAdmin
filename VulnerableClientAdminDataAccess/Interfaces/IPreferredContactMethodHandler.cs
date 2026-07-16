@@ -8,11 +8,9 @@ public interface IPreferredContactMethodHandler
 
     Task<List<PreferredContactMethodModel>> GetAllPreferredContactMethodsAsync();
 
-    Task UpdatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod, bool callSaveChanges);
+    Task UpdatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod);
 
-    Task CreatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod, bool callSaveChanges);
+    Task CreatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod);
 
-    Task DeletePreferredContactMethodAsync(int preferredContactMethodId, bool callSaveChanges);
-
-    Task SaveChangesAsync();
+    Task DeletePreferredContactMethodAsync(int preferredContactMethodId);
 }

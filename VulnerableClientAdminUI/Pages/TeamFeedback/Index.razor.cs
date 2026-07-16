@@ -11,7 +11,7 @@ public partial class Index
         TeamFeedbacks = (await TeamFeedbackHandler.GetTeamFeedbacksAsync(VulnerabilityInformationId))
             .ToList();
 
-        ContactId = VulnerabilityInformationHandler.GetContactIdFromVulnerabilityInformationId(VulnerabilityInformationId);
+        ContactId = await VulnerabilityInformationHandler.GetContactIdFromVulnerabilityInformationIdAsync(VulnerabilityInformationId);
         Snackbar.Add($"{TeamFeedbacks.Count} {(TeamFeedbacks.Count == 1 ? "team feedback found" : "team feedbacks found")}",
             TeamFeedbacks.Count == 0 ? Severity.Error : Severity.Success);
 
@@ -32,7 +32,7 @@ public partial class Index
 
         try
         {
-            await TeamFeedbackHandler.CreateTeamFeedbackAsync(TeamFeedbackModel, true);
+            await TeamFeedbackHandler.CreateTeamFeedbackAsync(TeamFeedbackModel);
             Snackbar.Add($"Team Feedback successfully created", Severity.Success);
             NavigationManager.NavigateTo(NavigationManager.Uri, true);
         }

@@ -19,7 +19,7 @@ public partial class Edit
 
         try
         {
-            await SavedPageHandler.UpdateSavedPageAsync(SavedPageModel, true);
+            await SavedPageHandler.UpdateSavedPageAsync(SavedPageModel);
             Snackbar.Add($"Saved Page {SavedPageModel.Title} successfully updated.", Severity.Success);
             NavigationManager.NavigateTo("savedpages/index");
         }

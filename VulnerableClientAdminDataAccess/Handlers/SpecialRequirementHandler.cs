@@ -1,47 +1,52 @@
 ﻿namespace VulnerableClientAdminDataAccess.Handlers;
 
-public class SpecialRequirementHandler : ISpecialRequirementHandler
-{
-    private readonly VulnerableClientAdminContext _context;
-
-    public SpecialRequirementHandler(VulnerableClientAdminContext context) =>
-        _context = context;
- 
-    public async Task CreateSpecialRequirementAsync(SpecialRequirementModel specialRequirement, bool callSaveChanges)
+public class SpecialRequirementHandler(IDbContextFactory<VulnerableClientAdminContext> factory) : ISpecialRequirementHandler
+{ 
+    public async Task CreateSpecialRequirementAsync(SpecialRequirementModel specialRequirement)
     {
-        _context.SpecialRequirements.Add(specialRequirement);
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await using var context = await factory.CreateDbContextAsync();
+        context.SpecialRequirements.Add(specialRequirement);
+        await context.SaveChangesAsync();
     }
 
-    public async Task<SpecialRequirementModel> GetSpecialRequirementAsync(int specialRequirementId) =>
-        await _context.SpecialRequirements
+    public async Task<SpecialRequirementModel> GetSpecialRequirementAsync(int specialRequirementId)
+    {
+        await using var _context = await factory.CreateDbContextAsync();
+        var specialRequirement = await _context.SpecialRequirements
             .AsNoTracking()
             .Include(s => s.Vulnerabilities)
             .SingleOrDefaultAsync(s => s.SpecialRequirementId == specialRequirementId);
+        return specialRequirement ?? new SpecialRequirementModel();
+    }
+           
+
+    public async Task<List<SpecialRequirementModel>> GetAllSpecialRequirementsAsync()
+    {
+        await using var _context = await factory.CreateDbContextAsync();
+        return await _context.SpecialRequirements
+            .Include(s => s.Vulnerabilities)
+            .OrderBy(s => s.Requirement)
+            .AsNoTracking()
+            .ToListAsync();
+    }
         
 
-    public async Task<List<SpecialRequirementModel>> GetAllSpecialRequirementsAsync() =>
-        await _context.SpecialRequirements
-        .Include(s => s.Vulnerabilities)
-        .OrderBy(s => s.Requirement)
-        .AsNoTracking()
-        .ToListAsync();
-
-    public async Task<List<SpecialRequirementModel>> GetActiveSpecialRequirementsAsync() =>
-        await _context.SpecialRequirements
-            .Include (s => s.Vulnerabilities)
+    public async Task<List<SpecialRequirementModel>> GetActiveSpecialRequirementsAsync()
+    {
+        await using var context = await factory.CreateDbContextAsync();
+        return await context.SpecialRequirements
+            .Include(s => s.Vulnerabilities)
             .AsNoTracking()
             .Where(s => s.RequirementActive)
             .OrderBy(s => s.Requirement)
             .ToListAsync();
+    }
+        
 
-    public async Task SaveChangesAsync() =>
-        await _context.SaveChangesAsync();
-
-    public async Task UpdateSpecialRequirementAsync(SpecialRequirementModel specialRequirement, bool callSaveChanges)
+    public async Task UpdateSpecialRequirementAsync(SpecialRequirementModel specialRequirement)
     {
-        var specialRequirementToUpdate = await _context.SpecialRequirements
+        await using var context = await factory.CreateDbContextAsync();
+        var specialRequirementToUpdate = await context.SpecialRequirements
             .SingleOrDefaultAsync(s => s.SpecialRequirementId == specialRequirement.SpecialRequirementId);
         if (specialRequirementToUpdate is null)
             return;
@@ -50,23 +55,22 @@ public class SpecialRequirementHandler : ISpecialRequirementHandler
         specialRequirementToUpdate.RequirementActive = specialRequirement.RequirementActive;
         specialRequirementToUpdate.Description = specialRequirement.Description;
 
-        _context.SpecialRequirements.Update(specialRequirementToUpdate);
+        context.SpecialRequirements.Update(specialRequirementToUpdate);
 
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
-    public async Task DeleteSpecialRequirementAsync(int specialRequirementId, bool callSaveChanges)
+    public async Task DeleteSpecialRequirementAsync(int specialRequirementId)
     {
-        var specialRequirementToDelete = _context.SpecialRequirements
-            .SingleOrDefault(s =>
+        await using var context = await factory.CreateDbContextAsync();
+        var specialRequirementToDelete = await context.SpecialRequirements
+            .SingleOrDefaultAsync(s =>
                 s.SpecialRequirementId == specialRequirementId);
         if (specialRequirementToDelete is null)
             return;
 
-        _context.SpecialRequirements.Remove(specialRequirementToDelete);
+        context.SpecialRequirements.Remove(specialRequirementToDelete);
 
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }

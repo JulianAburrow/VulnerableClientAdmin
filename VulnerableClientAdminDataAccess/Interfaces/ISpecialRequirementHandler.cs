@@ -2,7 +2,7 @@
 
 public interface ISpecialRequirementHandler
 {
-    Task CreateSpecialRequirementAsync(SpecialRequirementModel specialRequirement, bool callSaveChanges);
+    Task CreateSpecialRequirementAsync(SpecialRequirementModel specialRequirement);
 
     Task <List<SpecialRequirementModel>> GetAllSpecialRequirementsAsync();
 
@@ -10,9 +10,7 @@ public interface ISpecialRequirementHandler
 
     Task<SpecialRequirementModel> GetSpecialRequirementAsync(int specialRequirementId);
 
-    Task UpdateSpecialRequirementAsync(SpecialRequirementModel specialRequirement, bool callSaveChanges);
+    Task UpdateSpecialRequirementAsync(SpecialRequirementModel specialRequirement);
 
-    Task DeleteSpecialRequirementAsync(int specialRequirementId, bool callSaveChanges);
-
-    Task SaveChangesAsync();
+    Task DeleteSpecialRequirementAsync(int specialRequirementId);
 }

@@ -1,19 +1,7 @@
 ﻿namespace VulnerableClientAdminTest;
 
-public class SpecialRequirementHandlerTest : TestBase
+public class SpecialRequirementHandlerTest
 {
-    private readonly VulnerableClientAdminContext _context;
-    private readonly ISpecialRequirementHandler _specialRequirementHandler;
-
-    public SpecialRequirementHandlerTest()
-    {
-        var options = new DbContextOptionsBuilder<VulnerableClientAdminContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
-        _context = CreateContext();
-        _specialRequirementHandler = new SpecialRequirementHandler(_context);
-    }
-
     private readonly SpecialRequirementModel SpecialRequirementModel1 = new()
     {
         Requirement = "Requirement1",
@@ -58,63 +46,116 @@ public class SpecialRequirementHandlerTest : TestBase
     [Fact]
     public async Task CreateSpecialRequirementCreatesSpecialRequirement()
     {
-        var intialCount = _context.SpecialRequirements.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SpecialRequirementHandler(factory);
 
-        await _specialRequirementHandler.CreateSpecialRequirementAsync(SpecialRequirementModel1, false);
-        await _specialRequirementHandler.CreateSpecialRequirementAsync(SpecialRequirementModel2, false);
-        await _specialRequirementHandler.CreateSpecialRequirementAsync(SpecialRequirementModel3, false);
-        await _specialRequirementHandler.CreateSpecialRequirementAsync(SpecialRequirementModel4, true);
+        await handler.CreateSpecialRequirementAsync(SpecialRequirementModel1);
+        await handler.CreateSpecialRequirementAsync(SpecialRequirementModel2);
+        await handler.CreateSpecialRequirementAsync(SpecialRequirementModel3);
+        await handler.CreateSpecialRequirementAsync(SpecialRequirementModel4);
 
-        _context.SpecialRequirements.Count().Should().Be(intialCount + 4);
+        // Assert using a *fresh* context
+        using var assertContext = factory.CreateDbContext();
+
+        assertContext.SpecialRequirements.Count().Should().Be(4);
     }
 
     [Fact]
     public async Task DeleteSpecialRequirementDeletesSpecialRequirement()
     {
-        _context.SpecialRequirements.Add(SpecialRequirementModel1);
-        _context.SaveChanges();
-        var initialCount = _context.SpecialRequirements.Count();
-        await _specialRequirementHandler.DeleteSpecialRequirementAsync(SpecialRequirementModel1.SpecialRequirementId, true);
-        _context.SpecialRequirements.Count().Should().Be(initialCount - 1);
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SpecialRequirementHandler(factory);
+
+        // Seed using seedContext
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SpecialRequirements.Add(SpecialRequirementModel1);
+            seedContext.SaveChanges();
+        }
+
+        // Act
+        await handler.DeleteSpecialRequirementAsync(SpecialRequirementModel1.SpecialRequirementId);
+
+        // Assert using a fresh context
+        using var assertContext = factory.CreateDbContext();
+        assertContext.SpecialRequirements
+            .Count(s => s.SpecialRequirementId == SpecialRequirementModel1.SpecialRequirementId)
+            .Should().Be(0);
     }
 
     [Fact]
     public async Task GetActiveSpecialRequirementsGetsActiveSpecialRequirements()
     {
-        _context.SpecialRequirements.Add(SpecialRequirementModel1);
-        _context.SpecialRequirements.Add(SpecialRequirementModel2);
-        _context.SpecialRequirements.Add(SpecialRequirementModel3);
-        _context.SpecialRequirements.Add(SpecialRequirementModel4);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SpecialRequirementHandler(factory);
 
-        var activeSpecialRequirements = await _specialRequirementHandler.GetActiveSpecialRequirementsAsync();
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SpecialRequirements.AddRange(
+                SpecialRequirementModel1,
+                SpecialRequirementModel2,
+                SpecialRequirementModel3,
+                SpecialRequirementModel4
+            );
+            seedContext.SaveChanges();
+        }
 
-        activeSpecialRequirements.Count.Should().Be(_context.SpecialRequirements.Where(s => s.RequirementActive).Count());
+        var activeSpecialRequirements = await handler.GetActiveSpecialRequirementsAsync();
+
+        using var assertContext = factory.CreateDbContext();
+        var expectedCount = assertContext
+            .SpecialRequirements
+            .Count(s => s.RequirementActive);
+
+        activeSpecialRequirements.Count.Should().Be(expectedCount);
     }
 
     [Fact]
     public async Task GetAllSpecialRequirementsGetsAllSpecialRequirements()
     {
-        var initialCount = _context.SpecialRequirements.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SpecialRequirementHandler(factory);
 
-        _context.SpecialRequirements.Add(SpecialRequirementModel1);
-        _context.SpecialRequirements.Add(SpecialRequirementModel2);
-        _context.SpecialRequirements.Add(SpecialRequirementModel3);
-        _context.SpecialRequirements.Add(SpecialRequirementModel4);
-        _context.SaveChanges();
+        // Get initial count using a fresh context
+        using var initialContext = factory.CreateDbContext();
+        var initialCount = initialContext.SpecialRequirements.Count();
 
-        var specialRequirements = await _specialRequirementHandler.GetAllSpecialRequirementsAsync();
+        // Seed using a fresh context
+        using var seedContext = factory.CreateDbContext();
 
+        seedContext.SpecialRequirements.AddRange(
+            SpecialRequirementModel1,
+            SpecialRequirementModel2,
+            SpecialRequirementModel3,
+            SpecialRequirementModel4
+        );
+        seedContext.SaveChanges();
+
+        // Act
+        var specialRequirements = await handler.GetAllSpecialRequirementsAsync();
+
+        // Assert
         specialRequirements.Count.Should().Be(initialCount + 4);
     }
 
     [Fact]
     public async Task GetSpecialRequirementGetsSpecialRequirement()
     {
-        _context.SpecialRequirements.Add(SpecialRequirementModel1);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SpecialRequirementHandler(factory);
 
-        var returnedSpecialRequirement = await _specialRequirementHandler.GetSpecialRequirementAsync(SpecialRequirementModel1.SpecialRequirementId);
+        // Seed using a fresh context
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SpecialRequirements.Add(SpecialRequirementModel1);
+            seedContext.SaveChanges();
+        }
+
+        // Act
+        var returnedSpecialRequirement =
+            await handler.GetSpecialRequirementAsync(SpecialRequirementModel1.SpecialRequirementId);
+
+        // Assert
         returnedSpecialRequirement.Should().NotBeNull();
         returnedSpecialRequirement.Requirement.Should().Be(SpecialRequirementModel1.Requirement);
         returnedSpecialRequirement.Description.Should().Be(SpecialRequirementModel1.Description);
@@ -124,23 +165,40 @@ public class SpecialRequirementHandlerTest : TestBase
     [Fact]
     public async Task UpdateSpecialRequirementUpdatesSpecialRequirement()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SpecialRequirementHandler(factory);
+
+        // Seed using a fresh context
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SpecialRequirements.Add(SpecialRequirementModel4);
+            seedContext.SaveChanges();
+        }
+
+        // Modify the model (detached from EF)
         var requirement = "RequirementX";
         var description = "DescriptionX";
         var requirementActive = true;
 
-        _context.SpecialRequirements.Add(SpecialRequirementModel4);
-        _context.SaveChanges();
+        var updatedModel = new SpecialRequirementModel
+        {
+            SpecialRequirementId = SpecialRequirementModel4.SpecialRequirementId,
+            Requirement = requirement,
+            Description = description,
+            RequirementActive = requirementActive,
+        };
 
-        var specialRequirement = _context.SpecialRequirements.First(s => s.SpecialRequirementId == SpecialRequirementModel4.SpecialRequirementId);
-        specialRequirement.Requirement = requirement;
-        specialRequirement.Description = description;
-        specialRequirement.RequirementActive = requirementActive;
+        // Act
+        await handler.UpdateSpecialRequirementAsync(updatedModel);
 
-        await _specialRequirementHandler.UpdateSpecialRequirementAsync(SpecialRequirementModel4, true);
+        // Assert using a fresh context
+        using var assertContext = factory.CreateDbContext();
+        var updatedSpecialRequirement =
+            assertContext.SpecialRequirements.First(s =>
+                s.SpecialRequirementId == SpecialRequirementModel4.SpecialRequirementId);
 
-        var updatedSpcialRequirement = _context.SpecialRequirements.First(s => s.SpecialRequirementId == SpecialRequirementModel4.SpecialRequirementId);
-        updatedSpcialRequirement.Requirement.Should().Be(requirement);
-        updatedSpcialRequirement.Description.Should().Be(description);
-        updatedSpcialRequirement.RequirementActive.Should().Be(requirementActive);
+        updatedSpecialRequirement.Requirement.Should().Be(requirement);
+        updatedSpecialRequirement.Description.Should().Be(description);
+        updatedSpecialRequirement.RequirementActive.Should().Be(requirementActive);
     }
 }

@@ -1,16 +1,7 @@
 ﻿namespace VulnerableClientAdminTest;
 
-public class TeamFeedbackHandlerTest : TestBase
+public class TeamFeedbackHandlerTest
 {
-    private readonly VulnerableClientAdminContext _context;
-    private readonly ITeamFeedbackHandler _teamFeedbackHandler;
-
-    public TeamFeedbackHandlerTest()
-    {
-        _context = CreateContext();
-        _teamFeedbackHandler = new TeamFeedbackHandler(_context);
-    }
-
     private TeamFeedbackModel CreateFeedback(
         int viId,
         string feedback,
@@ -35,13 +26,17 @@ public class TeamFeedbackHandlerTest : TestBase
     [Fact]
     public async Task CreateTeamFeedbackCreatesTeamFeedback()
     {
-        var initialCount = _context.TeamFeedbacks.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new TeamFeedbackHandler(factory);
 
         var feedback = CreateFeedback(100, "Good work", DateTime.Now, "UnitTest", "UnitTest");
 
-        await _teamFeedbackHandler.CreateTeamFeedbackAsync(feedback, true);
+        await handler.CreateTeamFeedbackAsync(feedback);
 
-        _context.TeamFeedbacks.Count().Should().Be(initialCount + 1);
+        // Assert using a *fresh* context
+        using var assertContext = factory.CreateDbContext();
+
+        assertContext.TeamFeedbacks.Count().Should().Be(1);
     }
 
     // ---------------------------------------------------------
@@ -51,17 +46,23 @@ public class TeamFeedbackHandlerTest : TestBase
     [Fact]
     public async Task GetTeamFeedbackGetsTeamFeedback()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new TeamFeedbackHandler(factory);
+
         var feedback = CreateFeedback(100, "Initial feedback", DateTime.Now, "UnitTest", "UnitTest");
 
-        _context.TeamFeedbacks.Add(feedback);
-        _context.SaveChanges();
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.TeamFeedbacks.Add(feedback);
+            seedContext.SaveChanges();
+        }
 
-        var returned =
-            await _teamFeedbackHandler.GetTeamFeedbackAsync(feedback.TeamFeedbackId);
+        var returnedTeamFeedback =
+            await handler.GetTeamFeedbackAsync(feedback.TeamFeedbackId);
 
-        returned.Should().NotBeNull();
-        returned.Feedback.Should().Be("Initial feedback");
-        returned.VulnerabilityInformationId.Should().Be(100);
+        returnedTeamFeedback.Should().NotBeNull();
+        returnedTeamFeedback.Feedback.Should().Be("Initial feedback");
+        returnedTeamFeedback.VulnerabilityInformationId.Should().Be(100);
     }
 
     // ---------------------------------------------------------
@@ -71,6 +72,9 @@ public class TeamFeedbackHandlerTest : TestBase
     [Fact]
     public async Task GetTeamFeedbacksGetsFeedbacksForVulnerability()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new TeamFeedbackHandler(factory);
+
         // Seed client
         var client = new VulnerableClientModel
         {
@@ -78,29 +82,34 @@ public class TeamFeedbackHandlerTest : TestBase
             FirstName = "Alice",
             Surname = "Smith"
         };
-        _context.VulnerableClients.Add(client);
 
-        // Seed vulnerability info
-        var vi = new VulnerabilityInformationModel
+        using (var seedContext = factory.CreateDbContext())
         {
-            VulnerabilityInformationId = 300,
-            ContactId = 200,
-            RequiredActionByCompany = "",
-            ClientRequirementMonitoringNeed = "",
-            CreatedBy = "UnitTest",
-            LastUpdatedBy = "UnitTest"
-        };
-        _context.VulnerabilityInformation.Add(vi);
+            seedContext.VulnerableClients.Add(client);
+            seedContext.SaveChanges();
 
-        // Seed feedback entries
-        var f1 = CreateFeedback(300, "Old feedback", DateTime.Now.AddDays(-2), "UnitTest", "UnitTest");
-        var f2 = CreateFeedback(300, "New feedback", DateTime.Now, "UnitTest", "UnitTest");
+            // Seed vulnerability info
+            var vi = new VulnerabilityInformationModel
+            {
+                VulnerabilityInformationId = 300,
+                ContactId = 200,
+                RequiredActionByCompany = "",
+                ClientRequirementMonitoringNeed = "",
+                CreatedBy = "UnitTest",
+                LastUpdatedBy = "UnitTest"
+            };
+            seedContext.VulnerabilityInformation.Add(vi);
 
-        _context.TeamFeedbacks.Add(f1);
-        _context.TeamFeedbacks.Add(f2);
-        _context.SaveChanges();
+            // Seed feedback entries
+            var f1 = CreateFeedback(300, "Old feedback", DateTime.Now.AddDays(-2), "UnitTest", "UnitTest");
+            var f2 = CreateFeedback(300, "New feedback", DateTime.Now, "UnitTest", "UnitTest");
 
-        var results = await _teamFeedbackHandler.GetTeamFeedbacksAsync(300);
+            seedContext.TeamFeedbacks.Add(f1);
+            seedContext.TeamFeedbacks.Add(f2);
+            seedContext.SaveChanges();
+        }
+
+        var results = await handler.GetTeamFeedbacksAsync(300);
 
         results.Count.Should().Be(2);
         results.Should().BeInDescendingOrder(f => f.FeedbackDate);
@@ -115,12 +124,18 @@ public class TeamFeedbackHandlerTest : TestBase
     [Fact]
     public async Task UpdateTeamFeedbackUpdatesTeamFeedback()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new TeamFeedbackHandler(factory);
+
         var feedback = CreateFeedback(400, "Original", DateTime.Now, "UnitTest", "UnitTest");
 
-        _context.TeamFeedbacks.Add(feedback);
-        _context.SaveChanges();
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.TeamFeedbacks.Add(feedback);
+            seedContext.SaveChanges();
+        }
 
-        var updated = new TeamFeedbackModel
+        var updatedModel = new TeamFeedbackModel
         {
             TeamFeedbackId = feedback.TeamFeedbackId,
             VulnerabilityInformationId = 400,
@@ -130,11 +145,13 @@ public class TeamFeedbackHandlerTest : TestBase
             LastUpdatedBy = "UnitTest"
         };
 
-        await _teamFeedbackHandler.UpdateTeamFeedbackAsync(updated, true);
+        await handler.UpdateTeamFeedbackAsync(updatedModel);
 
-        var returned =
-            _context.TeamFeedbacks.First(f => f.TeamFeedbackId == feedback.TeamFeedbackId);
+        // Assert using a fresh context
+        using var assertContext = factory.CreateDbContext();
+        var updatedTeamFeedback =
+            assertContext.TeamFeedbacks.First(f => f.TeamFeedbackId == feedback.TeamFeedbackId);
 
-        returned.Feedback.Should().Be("Updated feedback");
+        updatedTeamFeedback.Feedback.Should().Be("Updated feedback");
     }
 }

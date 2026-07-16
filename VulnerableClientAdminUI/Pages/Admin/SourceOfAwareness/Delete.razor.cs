@@ -21,7 +21,7 @@ public partial class Delete
     {
         try
         {
-            await SourceOfAwarenessHandler.DeleteSourceOfAwarenessAsync(SourceOfAwarenessId, true);
+            await SourceOfAwarenessHandler.DeleteSourceOfAwarenessAsync(SourceOfAwarenessId);
             Snackbar.Add("Source Of Awareness successfully deleted.", Severity.Success);
             NavigationManager.NavigateTo("sourcesofawareness/index");
         }

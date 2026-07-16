@@ -1,19 +1,7 @@
 ﻿namespace VulnerableClientAdminTest;
 
-public class SourceOfAwarenessHandlerTest : TestBase
+public class SourceOfAwarenessHandlerTest
 {
-    private readonly VulnerableClientAdminContext _context;
-    private readonly ISourceOfAwarenessHandler _sourceOfAwarenessHandler;
-
-    public SourceOfAwarenessHandlerTest()
-    {
-        var options = new DbContextOptionsBuilder<VulnerableClientAdminContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
-        _context = CreateContext();
-        _sourceOfAwarenessHandler = new SourceOfAwarenessHandler(_context);
-    }
-
     private readonly SourceOfAwarenessModel SourceOfAwarenessModel1 = new()
     {
         Source = "Source1",
@@ -58,65 +46,114 @@ public class SourceOfAwarenessHandlerTest : TestBase
     [Fact]
     public async Task CreateSourceOfAwarenessCreatesSourceOfAwareness()
     {
-        var initialCount = _context.SourcesOfAwareness.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SourceOfAwarenessHandler(factory);
 
-        await _sourceOfAwarenessHandler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel1, false);
-        await _sourceOfAwarenessHandler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel2, false);
-        await _sourceOfAwarenessHandler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel3, false);
-        await _sourceOfAwarenessHandler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel4, true);
+        await handler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel1);
+        await handler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel2);
+        await handler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel3);
+        await handler.CreateSourceOfAwarenessAsync(SourceOfAwarenessModel4);
 
-        _context.SourcesOfAwareness.Count().Should().Be(initialCount + 4);
+        using var assertContext = factory.CreateDbContext();
+
+        assertContext.SourcesOfAwareness.Count().Should().Be(4);
     }
 
     [Fact]
     public async Task DeleteSourceOfAwarenessDeletesSourceOfAwareness()
     {
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel1);
-        _context.SaveChanges();
-        var sourceOfAwareness = _context.SourcesOfAwareness.First(s => s.SourceOfAwarenessId == SourceOfAwarenessModel1.SourceOfAwarenessId);
-        await _sourceOfAwarenessHandler.DeleteSourceOfAwarenessAsync(sourceOfAwareness.SourceOfAwarenessId, true);
-        _context.SourcesOfAwareness.Count(s => s.SourceOfAwarenessId == SourceOfAwarenessModel1.SourceOfAwarenessId).Should().Be(0);
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SourceOfAwarenessHandler(factory);
+
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SourcesOfAwareness.Add(SourceOfAwarenessModel1);
+            seedContext.SaveChanges();
+        }
+
+        await handler.DeleteSourceOfAwarenessAsync(SourceOfAwarenessModel1.SourceOfAwarenessId);
+
+        using var assertContext = factory.CreateDbContext();
+        assertContext.SourcesOfAwareness
+            .Count(s => s.SourceOfAwarenessId == SourceOfAwarenessModel1.SourceOfAwarenessId)
+            .Should().Be(0);
     }
 
     [Fact]
-    public async Task GetActiveSourcesOfAwarenessGetsActiveSourceOfAwareness()
+    public async Task GetActiveSourcesOfAwarenessGetsActiveSourcesOfAwareness()
     {
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel1);
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel2);
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel3);
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel4);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SourceOfAwarenessHandler(factory);
 
-        var activeSourcesOfAwareness = await _sourceOfAwarenessHandler.GetActiveSourcesOfAwarenessAsync();
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SourcesOfAwareness.AddRange(
+                SourceOfAwarenessModel1,
+                SourceOfAwarenessModel2,
+                SourceOfAwarenessModel3,
+                SourceOfAwarenessModel4
+            );
+            seedContext.SaveChanges();
+        }
 
-        activeSourcesOfAwareness.Count.Should().Be(_context.SourcesOfAwareness.Where(s => s.SourceActive).Count());
+        // Act
+        var activeSources = await handler.GetActiveSourcesOfAwarenessAsync();
+
+        // Assert using a fresh context
+        using var assertContext = factory.CreateDbContext();
+        var expectedCount = assertContext
+            .SourcesOfAwareness
+            .Count(s => s.SourceActive);
+
+        activeSources.Count.Should().Be(expectedCount);
     }
 
     [Fact]
     public async Task GetAllSourcesOfAwarenessGetsAllSourcesOfAwareness()
     {
-        var initialCount = _context.SourcesOfAwareness.Count();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SourceOfAwarenessHandler(factory);
 
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel1);
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel2);
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel3);
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel4);
-        _context.SaveChanges();
+        // Get initial count using a fresh context
+        using var initialContext = factory.CreateDbContext();
+        var initialCount = initialContext.SourcesOfAwareness.Count();
 
-        var sourcesOfAwareness = await _sourceOfAwarenessHandler.GetAllSourcesOfAwarenessAsync();
+        // Seed using a fresh context
+        using var seedContext = factory.CreateDbContext();
 
-        sourcesOfAwareness.Count().Should().Be(initialCount + 4);
+        seedContext.SourcesOfAwareness.AddRange(
+            SourceOfAwarenessModel1,
+            SourceOfAwarenessModel2,
+            SourceOfAwarenessModel3,
+            SourceOfAwarenessModel4
+        );
+        seedContext.SaveChanges();
+
+        // Act
+        var sourcesOfAwareness = await handler.GetAllSourcesOfAwarenessAsync();
+
+        // Assert
+        sourcesOfAwareness.Count.Should().Be(initialCount + 4);
     }
-
-
 
     [Fact]
     public async Task GetSourceOfAwarenessGetsSourceOfAwareness()
     {
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel1);
-        _context.SaveChanges();
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SourceOfAwarenessHandler(factory);
 
-        var returnedSourceOfAwareness = await _sourceOfAwarenessHandler.GetSourceOfAwarenessAsync(SourceOfAwarenessModel1.SourceOfAwarenessId);
+        // Seed using a fresh context
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SourcesOfAwareness.Add(SourceOfAwarenessModel1);
+            seedContext.SaveChanges();
+        }
+
+        // Act
+        var returnedSourceOfAwareness =
+            await handler.GetSourceOfAwarenessAsync(SourceOfAwarenessModel1.SourceOfAwarenessId);
+
+        // Assert
         returnedSourceOfAwareness.Should().NotBeNull();
         returnedSourceOfAwareness.Source.Should().Be(SourceOfAwarenessModel1.Source);
         returnedSourceOfAwareness.Description.Should().Be(SourceOfAwarenessModel1.Description);
@@ -126,21 +163,38 @@ public class SourceOfAwarenessHandlerTest : TestBase
     [Fact]
     public async Task UpdateSourceOfAwarenessUpdatesSourceOfAwareness()
     {
+        var factory = DbContextHelper.GetInMemoryFactory();
+        var handler = new SourceOfAwarenessHandler(factory);
+
+        // Seed using a fresh context
+        using (var seedContext = factory.CreateDbContext())
+        {
+            seedContext.SourcesOfAwareness.Add(SourceOfAwarenessModel4);
+            seedContext.SaveChanges();
+        }
+
+        // Modify the model (detached from EF)
         var source = "SourceX";
         var description = "DescriptionX";
         var sourceActive = true;
 
-        _context.SourcesOfAwareness.Add(SourceOfAwarenessModel4);
-        _context.SaveChanges();
+        var updatedModel = new SourceOfAwarenessModel
+        {
+            SourceOfAwarenessId = SourceOfAwarenessModel4.SourceOfAwarenessId,
+            Source = source,
+            Description = description,
+            SourceActive = sourceActive
+        };
 
-        var sourceOfAwareness = _context.SourcesOfAwareness.First(s => s.SourceOfAwarenessId == SourceOfAwarenessModel4.SourceOfAwarenessId);
-        sourceOfAwareness.Source = source;
-        sourceOfAwareness.Description = description;
-        sourceOfAwareness.SourceActive = sourceActive;
+        // Act
+        await handler.UpdateSourceOfAwarenessAsync(updatedModel);
 
-        await _sourceOfAwarenessHandler.UpdateSourceOfAwarenessAsync(sourceOfAwareness, true);
+        // Assert using a fresh context
+        using var assertContext = factory.CreateDbContext();
+        var updatedSourceOfAwareness =
+            assertContext.SourcesOfAwareness.First(s =>
+                s.SourceOfAwarenessId == SourceOfAwarenessModel4.SourceOfAwarenessId);
 
-        var updatedSourceOfAwareness = _context.SourcesOfAwareness.First(s => s.SourceOfAwarenessId == SourceOfAwarenessModel4.SourceOfAwarenessId);
         updatedSourceOfAwareness.Source.Should().Be(source);
         updatedSourceOfAwareness.Description.Should().Be(description);
         updatedSourceOfAwareness.SourceActive.Should().Be(sourceActive);

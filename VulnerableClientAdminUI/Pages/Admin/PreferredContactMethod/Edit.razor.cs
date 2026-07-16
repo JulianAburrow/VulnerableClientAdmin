@@ -29,7 +29,7 @@ public partial class Edit
 
         try
         {
-            await PreferredContactMethodHandler.UpdatePreferredContactMethodAsync(PreferredContactMethodModel, true);
+            await PreferredContactMethodHandler.UpdatePreferredContactMethodAsync(PreferredContactMethodModel);
             Snackbar.Add($"Preferred Contact Method {PreferredContactMethodModel.Method} successfully updated.", Severity.Success);
             NavigationManager.NavigateTo("preferredcontactmethods/index");
         }

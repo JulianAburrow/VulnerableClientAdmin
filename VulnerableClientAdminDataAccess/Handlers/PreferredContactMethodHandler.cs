@@ -1,47 +1,48 @@
 ﻿namespace VulnerableClientAdminDataAccess.Handlers;
 
-public class PreferredContactMethodHandler : IPreferredContactMethodHandler
+public class PreferredContactMethodHandler(IDbContextFactory<VulnerableClientAdminContext> factory) : IPreferredContactMethodHandler
 {
-    private readonly VulnerableClientAdminContext _context;
-
-    public PreferredContactMethodHandler(VulnerableClientAdminContext context)
+    public async Task CreatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod)
     {
-        _context = context;
+        await using var context = await factory.CreateDbContextAsync();
+        context.PreferredContactMethods.Add(preferredContactMethod);
+        await context.SaveChangesAsync();
     }
 
-    public async Task CreatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod, bool callSaveChanges)
+    public async Task<PreferredContactMethodModel> GetPreferredContactMethodAsync(int preferredContactMethodId)
     {
-        _context.PreferredContactMethods.Add(preferredContactMethod);
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await using var context = await factory.CreateDbContextAsync();
+        var preferredContactMethod = await context.PreferredContactMethods
+            .AsNoTracking()
+            .Include(p => p.Vulnerabilities)
+            .SingleOrDefaultAsync(p => p.PreferredContactMethodId == preferredContactMethodId);
+        return preferredContactMethod ?? new PreferredContactMethodModel();
     }
 
-    public async Task<PreferredContactMethodModel> GetPreferredContactMethodAsync(int preferredContactMethodId) =>
-        await _context.PreferredContactMethods
-        .AsNoTracking()
-        .Include(p => p.Vulnerabilities)
-        .SingleOrDefaultAsync(p => p.PreferredContactMethodId == preferredContactMethodId);
+    public async Task<List<PreferredContactMethodModel>> GetAllPreferredContactMethodsAsync()
+    {
+        await using var context = await factory.CreateDbContextAsync();
+        return await context.PreferredContactMethods
+            .Include(p => p.Vulnerabilities)
+            .AsNoTracking()
+            .OrderBy(p => p.Method)
+            .ToListAsync();
+    }
 
-    public async Task<List<PreferredContactMethodModel>> GetAllPreferredContactMethodsAsync() =>
-        await _context.PreferredContactMethods
-        .Include(p => p.Vulnerabilities)
-        .AsNoTracking()
-        .OrderBy(p => p.Method)
-        .ToListAsync();
-
-    public async Task<List<PreferredContactMethodModel>> GetActivePreferredContactMethodsAsync() =>
-        await _context.PreferredContactMethods
+    public async Task<List<PreferredContactMethodModel>> GetActivePreferredContactMethodsAsync()
+    {
+        await using var context = await factory.CreateDbContextAsync();
+        return await context.PreferredContactMethods
             .AsNoTracking()
             .Where(p => p.MethodActive)
             .OrderBy(p => p.Method)
             .ToListAsync();
+    }
 
-    public async Task SaveChangesAsync() =>
-        await _context.SaveChangesAsync();
-
-    public async Task UpdatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod, bool callSaveChanges)
+    public async Task UpdatePreferredContactMethodAsync(PreferredContactMethodModel preferredContactMethod)
     {
-        var preferredContactMethodToUpdate = await _context.PreferredContactMethods
+        await using var context = await factory.CreateDbContextAsync();
+        var preferredContactMethodToUpdate = await context.PreferredContactMethods
             .SingleOrDefaultAsync(p => p.PreferredContactMethodId == preferredContactMethod.PreferredContactMethodId);
         if (preferredContactMethodToUpdate is null)
             return;
@@ -50,23 +51,22 @@ public class PreferredContactMethodHandler : IPreferredContactMethodHandler
         preferredContactMethodToUpdate.MethodActive = preferredContactMethod.MethodActive;
         preferredContactMethodToUpdate.Description = preferredContactMethod.Description;
 
-        _context.PreferredContactMethods.Update(preferredContactMethodToUpdate);
+        context.PreferredContactMethods.Update(preferredContactMethodToUpdate);
 
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
-    public async Task DeletePreferredContactMethodAsync(int preferredContactMethodId, bool callSaveChanges)
+    public async Task DeletePreferredContactMethodAsync(int preferredContactMethodId)
     {
-        var preferredContactMethodToDelete = _context.PreferredContactMethods
-            .SingleOrDefault(p =>
+        await using var context = await factory.CreateDbContextAsync();
+        var preferredContactMethodToDelete = await context.PreferredContactMethods
+            .SingleOrDefaultAsync(p =>
                 p.PreferredContactMethodId == preferredContactMethodId);
         if (preferredContactMethodToDelete is null)
             return;
 
-        _context.PreferredContactMethods.Remove(preferredContactMethodToDelete);
-
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        context.PreferredContactMethods.Remove(preferredContactMethodToDelete);
+        
+        await context.SaveChangesAsync();
     }
 }

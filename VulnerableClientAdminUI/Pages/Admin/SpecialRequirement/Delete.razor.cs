@@ -20,7 +20,7 @@ public partial class Delete
     {
         try
         {
-            await SpecialRequirementHandler.DeleteSpecialRequirementAsync(SpecialRequirementModel.SpecialRequirementId, true);
+            await SpecialRequirementHandler.DeleteSpecialRequirementAsync(SpecialRequirementModel.SpecialRequirementId);
             Snackbar.Add("Special Requirement successfully deleted.", Severity.Success);
             NavigationManager.NavigateTo("specialrequirements/index");
         }

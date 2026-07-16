@@ -13,7 +13,7 @@ public partial class Delete
     {
         try
         {
-            await SavedPageHandler.DeleteSavedPageAsync(SavedPageId, true);
+            await SavedPageHandler.DeleteSavedPageAsync(SavedPageId);
             Snackbar.Add($"Save Page {SavedPageModel.Title} successfully deleted.", Severity.Success);
             NavigationManager.NavigateTo("savedpages/index");
         }

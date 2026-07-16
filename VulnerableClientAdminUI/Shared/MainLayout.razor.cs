@@ -37,7 +37,7 @@ public partial class MainLayout
 
         try
         {
-            await SavedPageHandler.CreateSavedPageAsync(savedPage, true);
+            await SavedPageHandler.CreateSavedPageAsync(savedPage);
             Snackbar.Add("Page successfully saved", Severity.Success);
         }
         catch

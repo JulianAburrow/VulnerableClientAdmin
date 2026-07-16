@@ -1,11 +1,9 @@
 ﻿namespace VulnerableClientAdminDataAccess.Handlers;
 
-public class CDOutcomeHandler : ICDOutcomeHandler
+public class CDOutcomeHandler(IDbContextFactory<VulnerableClientAdminContext> factory) : ICDOutcomeHandler
 {
-    private readonly VulnerableClientAdminContext _context;
-
-    private readonly List<string> ColumnNames = new()
-    {
+    private static readonly List<string> ColumnNames =
+    [
         "CDOutcomeUnderstandingNeedsGoodOutcomes",
         "CDOutcomeUnderstandingNeedsBadOutcomes",
         "CDOutcomeStaffSkillsAndCapabilityGoodOutcomes",
@@ -14,38 +12,38 @@ public class CDOutcomeHandler : ICDOutcomeHandler
         "CDOutcomeTakingPracticalActionsBadOutcomes",
         "CDOutcomeMonitoringAndEvaluationGoodOutcomes",
         "CDOutcomeMonitoringAndEvaluationBadOutcomes",
-    };
+    ];
 
-    public CDOutcomeHandler(VulnerableClientAdminContext context) =>
-        _context = context;
-
-    private DateTime GetLatestDateOfCDOutcome(int vulnerablityInformationId)
+    private async Task<DateTime> GetLatestDateOfCDOutcomeAsync(int vulnerablityInformationId)
     {
-        var latestDate = _context.AuditObjects
+        await using var context = await factory.CreateDbContextAsync();
+
+        var latestDate = await context.AuditObjects
             .OrderByDescending(a => a.ChangedDate)
             .Where(a =>
                 a.ObjectType == "VulnerabilityInformationModel" &&
                 a.ObjectId == vulnerablityInformationId.ToString() &&
                 ColumnNames.Contains(a.ColumnName))
-            .Select(a => a.ChangedDate)
-            .First();
+            .Select(a => (DateTime?)a.ChangedDate)
+            .FirstOrDefaultAsync();
 
-        return latestDate;
+        return latestDate ?? new DateTime(1900, 1, 1); // Return a default date if no records are found
     }
 
-    public List<CDOutcomeModel> GetCDOutcomes(DateTime? startDate = null, DateTime? endDate = null, int? vulnerabilityInformationId = null)
+    public async Task<List<CDOutcomeModel>> GetCDOutcomesAsync(DateTime? startDate = null, DateTime? endDate = null, int? vulnerabilityInformationId = null)
     {
-        var outcomes = _context.AuditObjects
+        await using var context = await factory.CreateDbContextAsync();
+        var outcomes = context.AuditObjects
             .Where(a =>
                 a.ObjectType == "VulnerabilityInformationModel" &&
                 ColumnNames.Contains(a.ColumnName))
             .Join(
-                _context.VulnerabilityInformation,
+                context.VulnerabilityInformation,
                 aom => aom.ObjectId,
                 vim => vim.VulnerabilityInformationId.ToString(),
                 (aom, vim) => new { VulnerabilityInformationModel = vim, AuditObjectModel = aom })
             .Join(
-                _context.VulnerableClients,
+                context.VulnerableClients,
                 vim => vim.VulnerabilityInformationModel.ContactId,
                 vcm => vcm.ContactId,
                 (vim, vcm) => new { VulnerabilityInformationModel = vim, VulnerableClientModel = vcm })
@@ -79,6 +77,6 @@ public class CDOutcomeHandler : ICDOutcomeHandler
                 o => o.VulnerabilityInformationId == vulnerabilityInformationId);
         }
 
-        return outcomes.ToList();
+        return await outcomes.ToListAsync();
     }
 }

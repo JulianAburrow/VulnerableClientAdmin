@@ -6,7 +6,7 @@ public static class ServiceExtensions
     {
         var connectionString = configuration.GetConnectionString("VulnerableClientAdminConnectionString");
         
-        services.AddDbContext<VulnerableClientAdminContext>(
+        services.AddDbContextFactory<VulnerableClientAdminContext>(
             options =>
                 options.UseSqlServer(connectionString));
     }

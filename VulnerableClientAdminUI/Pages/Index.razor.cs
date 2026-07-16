@@ -15,7 +15,7 @@ public partial class Index
         {
             MainLayout.SetHeaderValue("Vulnerabilities for today and earlier");            
 
-            VulnerabilitiesForTodayOrEarlier = await VulnerabilityInformationHandler.GetVulnerabilitiesForTodayOrEarlier(DateTime.Now);        
+            VulnerabilitiesForTodayOrEarlier = await VulnerabilityInformationHandler.GetVulnerabilitiesForTodayOrEarlierAsync(DateTime.Now);        
         }
     }    
 

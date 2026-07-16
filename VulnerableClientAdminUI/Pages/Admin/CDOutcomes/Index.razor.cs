@@ -31,7 +31,7 @@ public partial class Index
         HideSearchBox = !HideSearchBox;
     }
 
-    private void DoCDOutcomeSearch()
+    private async Task DoCDOutcomeSearchAsync()
     {
         HideAlert = true;
         if (StartDate is null || EndDate is null)
@@ -40,7 +40,7 @@ public partial class Index
             return;
         }
 
-        CDOutcomes = CDOutcomeHandler.GetCDOutcomes(StartDate.Value, EndDate.Value.AddDays(1), VulnerableClientId);
+        CDOutcomes = await CDOutcomeHandler.GetCDOutcomesAsync(StartDate.Value, EndDate.Value.AddDays(1), VulnerableClientId);
         var cdOutcomeCount = CDOutcomes.Count;
         Snackbar.Add(cdOutcomeCount == 1
             ? $"{cdOutcomeCount} CDOutcome found"

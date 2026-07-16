@@ -1,60 +1,64 @@
 ﻿
 namespace VulnerableClientAdminDataAccess.Handlers;
 
-public class SourceOfAwarenessHandler : ISourceOfAwarenessHandler
+public class SourceOfAwarenessHandler(IDbContextFactory<VulnerableClientAdminContext> factory) : ISourceOfAwarenessHandler
 {
-    private readonly VulnerableClientAdminContext _context;
-
-    public SourceOfAwarenessHandler(VulnerableClientAdminContext context) =>
-        _context = context;
-    
-    public async Task CreateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness, bool callSaveChanges)
+    public async Task CreateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness)
     {
-        _context.SourcesOfAwareness.Add(sourceOfAwareness);
-        if (callSaveChanges )
-            await SaveChangesAsync();
+        using var context = await factory.CreateDbContextAsync();
+        context.SourcesOfAwareness.Add(sourceOfAwareness);
+        await context.SaveChangesAsync();
     }
 
-    public async Task<SourceOfAwarenessModel> GetSourceOfAwarenessAsync(int sourceOfAwarenessId) =>
-        await _context.SourcesOfAwareness
+    public async Task<SourceOfAwarenessModel> GetSourceOfAwarenessAsync(int sourceOfAwarenessId)
+    {
+        using var context = await factory.CreateDbContextAsync();
+        var sourceOfAwareness = await context.SourcesOfAwareness
             .AsNoTracking()
-            .Include(s => s.Vulnerabilities)
             .SingleOrDefaultAsync(s => s.SourceOfAwarenessId == sourceOfAwarenessId);
 
-    public async Task<List<SourceOfAwarenessModel>> GetAllSourcesOfAwarenessAsync() =>
-        await _context.SourcesOfAwareness
+        return sourceOfAwareness ?? new SourceOfAwarenessModel();
+    }
+
+    public async Task<List<SourceOfAwarenessModel>> GetAllSourcesOfAwarenessAsync()
+    {
+        using var context = await factory.CreateDbContextAsync();
+        return await context.SourcesOfAwareness
             .Include(s => s.Vulnerabilities)
             .AsNoTracking()
             .OrderBy(s => s.Source)
             .ToListAsync();
+    }
+        
 
-    public async Task<List<SourceOfAwarenessModel>> GetActiveSourcesOfAwarenessAsync() =>
-        await _context.SourcesOfAwareness
+    public async Task<List<SourceOfAwarenessModel>> GetActiveSourcesOfAwarenessAsync()
+    {
+        using var context = await factory.CreateDbContextAsync();
+        return await context.SourcesOfAwareness
             .AsNoTracking()
             .Where(s => s.SourceActive)
             .OrderBy(s => s.Source)
             .ToListAsync();
+    }
 
-    public async Task DeleteSourceOfAwarenessAsync(int sourceOfAwarenessId, bool callSaveChanges)
+    public async Task DeleteSourceOfAwarenessAsync(int sourceOfAwarenessId)
     {
-        var sourceOfAwarenessToDelete = _context.SourcesOfAwareness
-            .SingleOrDefault(s =>
+        using var context = await factory.CreateDbContextAsync();
+        var sourceOfAwarenessToDelete = await context.SourcesOfAwareness
+            .SingleOrDefaultAsync(s =>
                 s.SourceOfAwarenessId == sourceOfAwarenessId);
         if (sourceOfAwarenessToDelete is null)
             return;
 
-        _context.SourcesOfAwareness.Remove(sourceOfAwarenessToDelete);
+        context.SourcesOfAwareness.Remove(sourceOfAwarenessToDelete);
 
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
-    public async Task SaveChangesAsync() =>
-        await _context.SaveChangesAsync();
-
-    public async Task UpdateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness, bool callSaveChanges)
+    public async Task UpdateSourceOfAwarenessAsync(SourceOfAwarenessModel sourceOfAwareness)
     {
-        var sourceOfAwarenessToUpdate = await _context.SourcesOfAwareness
+        using var context = await factory.CreateDbContextAsync();
+        var sourceOfAwarenessToUpdate = await context.SourcesOfAwareness
             .SingleOrDefaultAsync(s => s.SourceOfAwarenessId == sourceOfAwareness.SourceOfAwarenessId);
         if (sourceOfAwarenessToUpdate is null)
             return;
@@ -63,9 +67,8 @@ public class SourceOfAwarenessHandler : ISourceOfAwarenessHandler
         sourceOfAwarenessToUpdate.SourceActive = sourceOfAwareness.SourceActive;
         sourceOfAwarenessToUpdate.Description = sourceOfAwareness.Description;
 
-        _context.SourcesOfAwareness.Update(sourceOfAwarenessToUpdate);
+        context.SourcesOfAwareness.Update(sourceOfAwarenessToUpdate);
 
-        if (callSaveChanges)
-            await SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }

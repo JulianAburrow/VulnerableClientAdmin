@@ -21,7 +21,7 @@ public partial class Delete
     {
         try
         {
-            await PreferredContactMethodHandler.DeletePreferredContactMethodAsync(PreferredContactMethodModel.PreferredContactMethodId, true);
+            await PreferredContactMethodHandler.DeletePreferredContactMethodAsync(PreferredContactMethodModel.PreferredContactMethodId);
             Snackbar.Add("Preferred Contact Method successfully deleted", Severity.Success);
             NavigationManager.NavigateTo("preferredcontactmethods/index");
         }

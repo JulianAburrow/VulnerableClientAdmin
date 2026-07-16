@@ -20,7 +20,7 @@ public partial class Create
 
         try
         {
-            await PreferredContactMethodHandler.CreatePreferredContactMethodAsync(PreferredContactMethodModel, true);
+            await PreferredContactMethodHandler.CreatePreferredContactMethodAsync(PreferredContactMethodModel);
             Snackbar.Add($"Preferred Contact Method {PreferredContactMethodModel.Method} successfully created.", Severity.Success);
             NavigationManager.NavigateTo("preferredcontactmethods/index");
         }

@@ -14,7 +14,7 @@ public partial class Create
 
         try
         {
-            await SavedPageHandler.CreateSavedPageAsync(SavedPageModel, true);
+            await SavedPageHandler.CreateSavedPageAsync(SavedPageModel);
             Snackbar.Add($"Saved Page {SavedPageModel.Title} successfully created.", Severity.Success);
             NavigationManager.NavigateTo("savedpages/index");
         }
