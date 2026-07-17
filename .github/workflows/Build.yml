@@ -1,4 +1,4 @@
-name: Build and Test FilmReference
+name: Build and Test VulnerableClientAdmin
 
 on:
   push:
