@@ -28,7 +28,7 @@ jobs:
         run: |
           dotnet build VulnerableClientAdminUI/VulnerableClientAdminUI.csproj --no-restore --configuration Release
           dotnet build VulnerableClientAdminDataAccess/VulnerableClientAdminDataAccess.csproj --no-restore --configuration Release
-          dotnet build VulnerableClientAdminTests/VulnerableClientAdminTests.csproj --no-restore --configuration Release
+          dotnet build VulnerableClientAdminTest/VulnerableClientAdminTest.csproj --no-restore --configuration Release
 
       - name: Run tests
         run: dotnet test VulnerableClientAdminTests/VulnerableClientAdminTests.csproj --no-build --configuration Release --verbosity normal
