@@ -71,14 +71,8 @@ It is recommended that you change the password after first login or replace this
 
 ### 4. User Registration and Default Role Assignment
 
-When a new user registers through the application, they are automatically assigned the basic `User` role.  
-This allows newly registered users to log in and access standard functionality immediately.
-
-This behaviour is designed for development and testing convenience and can be easily modified to require:
-
-- Administrator approval  
-- Manual role assignment  
-- Restricted access until verified  
+When a new user registers through the application, they are not assigned any role and will not be able to log in.
+The admin account will need to assign a suitable role to the user.
 
 The role assignment logic is contained within the application startup and Identity configuration.
 
