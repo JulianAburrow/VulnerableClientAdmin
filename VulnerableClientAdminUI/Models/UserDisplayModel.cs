@@ -20,6 +20,7 @@ public class UserDisplayModel
     [Compare("Password", ErrorMessage = "Passwords do not match")]
     public string ConfirmPassword { get; set; } = default!;
 
-    [NotPlaceholder]
-    public string Role { get; set; } = default!;
+    public bool IsActive { get; set; }
+
+    public string Permission { get; set; } = string.Empty;
 }

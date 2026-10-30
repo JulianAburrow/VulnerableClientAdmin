@@ -1,0 +1,37 @@
+﻿@inherits AuthBasePageClass
+
+@page "/auth/login"
+
+<MudPaper Class="pa-6 mx-auto mt-8" MaxWidth="400px">
+    <MudText Typo="Typo.h5">Login</MudText>
+        
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <MudAlert Severity="Severity.Error" Class="mt-3">@Message</MudAlert>
+    }
+
+    <form method="post" action="/auth/login-http">
+        <MudTextField @bind-Value="Email"
+                      Label="Email"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      Class="mt-4"
+                      Name="email"
+                      InputType="InputType.Email" />
+
+        <MudTextField @bind-Value="Password"
+                      Label="Password"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      Class="mt-4"
+                      Name="password"
+                      InputType="InputType.Password" />
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Class="mt-4"
+                   ButtonType="ButtonType.Submit">
+            Login
+        </MudButton>
+    </form>
+</MudPaper>

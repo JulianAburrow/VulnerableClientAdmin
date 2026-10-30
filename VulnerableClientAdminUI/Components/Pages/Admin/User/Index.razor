@@ -1,0 +1,110 @@
+﻿@page "/users/index"
+@inherits UserBasePageClass
+
+<PageTitle>Users</PageTitle>
+
+<AuthorizeView Policy="@PermissionNames.CanAdmin">
+    <Authorized>
+
+        @if (Users is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">
+                Loading Users
+            </MudAlert>
+            return;
+        }
+
+        <br />
+
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+
+            <MudTabPanel Text="Admin">
+
+                <br />
+
+                <a class="btn btn-primary" href="user/create">Add new</a>
+
+                <br />
+                <br />
+
+                <MudTable Items="Users"
+                          Hover
+                          FixedHeader="true"
+                          Height="500"
+                          T="UserListItemModel">
+
+                    <HeaderContent>
+                        <MudTh title="Sort by First name">
+                            <MudTableSortLabel SortBy="new Func<UserListItemModel, object>(x => x.FirstName)">
+                                First Name
+                            </MudTableSortLabel>
+                        </MudTh>
+
+                        <MudTh title="Sort by Last Name">
+                            <MudTableSortLabel SortBy="new Func<UserListItemModel, object>(x => x.LastName)">
+                                Last Name
+                            </MudTableSortLabel>
+                        </MudTh>
+
+                        <MudTh title="Sort by Email Address">
+                            <MudTableSortLabel SortBy="new Func<UserListItemModel, object>(x => x.Email)">
+                                Email Address
+                            </MudTableSortLabel>
+                        </MudTh>
+
+                        <MudTh title="Sort by Permission">
+                            <MudTableSortLabel SortBy="new Func<UserListItemModel, object>(x => x.Permission)">
+                                Permission
+                            </MudTableSortLabel>
+                        </MudTh>
+
+                        <MudTh title="Sort by Active">
+                            <MudTableSortLabel SortBy="new Func<UserListItemModel, object>(x => x.IsActive)">
+                                Active
+                            </MudTableSortLabel>
+                        </MudTh>
+
+                        <MudTh></MudTh>
+                    </HeaderContent>
+
+                    <RowTemplate Context="subcontext">
+                        <MudTd>@subcontext.FirstName</MudTd>
+                        <MudTd>@subcontext.LastName</MudTd>
+                        <MudTd>@subcontext.Email</MudTd>
+                        <MudTd>@subcontext.Permission</MudTd>
+                        <MudTd>@subcontext.IsActive</MudTd>
+
+                        <MudTd>
+                            <a class="btn btn-primary" href="user/view/@subcontext.Id">View</a>
+
+                            @if (CurrentUser.Id != subcontext.Id)
+                            {
+                                @:&nbsp;
+                                <a class="btn btn-primary" href="user/edit/@subcontext.Id">Edit</a>
+                                @:&nbsp;
+                                <a class="btn btn-danger" href="user/delete/@subcontext.Id">Delete</a>
+                            }
+                        </MudTd>
+                    </RowTemplate>
+
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }" />
+                    </PagerContent>
+
+                </MudTable>
+
+            </MudTabPanel>
+
+            <MudTabPanel Text="Audit">
+                <AuditObjectsComponent AuditObjectList="@AuditObjects" />
+            </MudTabPanel>
+
+        </MudTabs>
+
+    </Authorized>
+
+    <NotAuthorized>
+        <NotAuthorizedComponent />
+    </NotAuthorized>
+
+</AuthorizeView>

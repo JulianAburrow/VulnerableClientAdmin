@@ -21,5 +21,4 @@ global using VulnerableClientAdminUI.Shared;
 global using VulnerableClientAdminUI.Shared.BasePageClasses;
 global using VulnerableClientAdminUI.Shared.CommonValues;
 global using VulnerableClientAdminUI.Shared.Methods;
-global using VulnerableClientAdminUI.Shared.Services;
 global using VulnerableClientAdminUI.Validators;

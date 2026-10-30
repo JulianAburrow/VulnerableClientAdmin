@@ -1,0 +1,35 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudPopoverProvider />
+<MudSnackbarProvider />
+
+<PageTitle>Vulnerability Manager</PageTitle>
+
+<CascadingValue Value="this">
+    <MudLayout>
+        <MudAppBar Elevation="1">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
+            <MudText Class="header-bar-text" Typo="Typo.h5" style="width:600px">Vulnerable Client Manager</MudText>
+            <MudSpacer />
+            <HeaderValueComponent HeaderValue="@HeaderValue" />
+            <div style="margin-right: 100px; width: 600px">
+                <LoginDisplayComponent />
+            </div>
+            <MudTooltip Text="Save to MyMM">
+                <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                Color="Color.Inherit"
+                                OnClick="SavePage" />
+            </MudTooltip>
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+            <NavMenu />
+        </MudDrawer>
+        <MudMainContent>
+            <MudContainer MaxWidth="MaxWidth.Large">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+</CascadingValue>

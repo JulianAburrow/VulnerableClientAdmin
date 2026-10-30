@@ -1,0 +1,19 @@
+﻿@page "/auth/logout"
+
+<MudPaper Class="pa-6 mx-auto mt-8" MaxWidth="400px">
+    <MudText Typo="Typo.h5">Logout</MudText>
+
+    <MudText Class="mt-2">
+        Are you sure you want to log out?
+    </MudText>
+
+    <form method="post" action="/auth/logout-http">
+        <MudButton Variant="Variant.Filled"
+                    Color="Color.Error"
+                    Class="mt-4"
+                    ButtonType="ButtonType.Submit">
+            Confirm Logout
+        </MudButton>
+    </form>
+
+</MudPaper>

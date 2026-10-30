@@ -379,6 +379,7 @@ CREATE TABLE [vcadminsecurity].[AspNetUsers] (
     [LockoutEnd] datetimeoffset NULL,
     [LockoutEnabled] bit NOT NULL,
     [AccessFailedCount] int NOT NULL,
+	[IsActive] bit NOT NULL DEFAULT 1,
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY ([Id])
 );
 
