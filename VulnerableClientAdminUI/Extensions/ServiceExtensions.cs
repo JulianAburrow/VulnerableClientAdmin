@@ -13,7 +13,6 @@ public static class ServiceExtensions
 
     public static void AddDependencies(this IServiceCollection services)
     {
-        services.AddTransient<IAppAuthorizationService, AppAuthorizationService>();
         services.AddTransient<IAuditObjectHandler, AuditObjectHandler>();
         services.AddTransient<ICDOutcomeHandler, CDOutcomeHandler>();
         services.AddTransient<IPreferredContactMethodHandler, PreferredContactMethodHandler>();

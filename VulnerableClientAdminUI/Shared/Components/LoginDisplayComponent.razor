@@ -1,32 +1,14 @@
 ﻿<AuthorizeView>
-    <Authorized>
+    <Authorized Context="authContext">
         @if (authUser is not null)
         {
             <ul class="navbar-nav flex-row">
                 <li class="nav-item mx-2">
-                    <a class="btn btn-light"
-                           href="/Identity/Account/Manage/Index">
-                        Hello @authUser.Identity?.Name!
-                    </a>
-                </li>
-
-                <li class="nav-item mx-2">
-                    <a href="/Identity/Account/Logout" class="btn btn-light">Logout</a>
-
-                    @* <form method="post" action="/Identity/Account/Logout">
-                        <AntiforgeryToken />
-                        <button type="submit" class="btn btn-light">
-                            Logout
-                        </button>
-                    </form> *@
+                    <MudText Typo="Typo.subtitle1">
+                        Logged in as @authUser.Identity?.Name
+                    </MudText>
                 </li>
             </ul>
         }
     </Authorized>
-
-    <NotAuthorized>
-        <a class="btn btn-light" href="/Identity/Account/Register">Register</a>
-        |
-        <a class="btn btn-light" href="/Identity/Account/Login">Login</a>
-    </NotAuthorized>
 </AuthorizeView>

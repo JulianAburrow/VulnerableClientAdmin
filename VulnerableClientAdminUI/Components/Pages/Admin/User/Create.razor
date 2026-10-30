@@ -1,0 +1,30 @@
+﻿@page "/user/create"
+@inherits UserBasePageClass
+
+<PageTitle>Create User</PageTitle>
+
+@if (Permissions is null)
+{
+    <p>Loading permissions...</p>
+    return;
+}
+
+<AuthorizeView Policy="@PermissionNames.CanAdmin">
+    <Authorized>
+
+        <EditForm Context="subcontext" Model="@UserDisplayModel" OnValidSubmit="CreateUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <UserCreateUpdateComponent UserDisplayModel="@UserDisplayModel" Permissions="Permissions" />
+
+        </EditForm>
+
+    </Authorized>
+    <NotAuthorized>
+
+        <NotAuthorizedComponent />
+
+    </NotAuthorized>
+</AuthorizeView>
+

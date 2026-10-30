@@ -1,0 +1,56 @@
+﻿@page "/auth/register"
+
+<MudPaper Class="pa-6 mx-auto mt-8" MaxWidth="400px">
+    <MudText Typo="Typo.h5">Register</MudText>
+
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <MudAlert Severity="Severity.Error" Class="mt-3">
+            @Message
+        </MudAlert>
+    }
+
+    <form method="post" action="/auth/register-http">
+        <MudTextField @bind-Value="FirstName"
+                      Label="First Name"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      Class="mt-4"
+                      Name="firstname" />
+        <MudTextField @bind-Value="LastName"
+                      Label="Last Name"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      Class="mt-4"
+                      Name="lastname" />
+        <MudTextField @bind-Value="Email"
+                      Label="Email"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      Class="mt-4"
+                      Name="email"
+                      InputType="InputType.Email" />
+
+        <MudTextField @bind-Value="Password"
+                      Label="Password"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      Class="mt-4"
+                      Name="password"
+                      InputType="InputType.Password" />
+
+        <MudTextField @bind-Value="ConfirmPassword"
+                      Label="Confirm Password"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      Class="mt-4"
+                      Name="confirm"
+                      InputType="InputType.Password" />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Class="mt-4"
+                   ButtonType="ButtonType.Submit">
+            Register
+        </MudButton>
+    </form>
+</MudPaper>

@@ -1,4 +1,6 @@
-﻿namespace VulnerableClientAdminUI.Shared.BasePageClasses;
+﻿using VulnerableClientAdminUI.Components.Layout;
+
+namespace VulnerableClientAdminUI.Shared.BasePageClasses;
 
 public abstract class BasePageClass : ComponentBase
 {
@@ -8,9 +10,9 @@ public abstract class BasePageClass : ComponentBase
 
     [Inject] protected IJSRuntime JSRuntime { get; set; } = null!;
 
-    [Inject] protected IAuditObjectHandler AuditObjectHandler { get; set; } = null!;
+    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
-    [Inject] protected IAppAuthorizationService AppAuthorizationService { get; set; } = null!;
+    [Inject] protected IAuditObjectHandler AuditObjectHandler { get; set; } = null!;
 
     public List<AuditObjectModel> AuditObjects { get; set; } = null!;
 

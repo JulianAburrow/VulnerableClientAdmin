@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView Policy="@PermissionNames.CanView">
+    <Authorized>
+        <MudNavMenu>
+
+            <!-- General section -->
+            <MudNavGroup Title="Vulnerability Information" Expanded="true">
+                <MudNavLink Href="vulnerabilities/search">Search</MudNavLink>
+                <MudNavLink Href="vulnerabilityinformation/search">Add New</MudNavLink>
+                <MudNavLink Href="vulnerableclients/index">Vulnerable Clients</MudNavLink>
+                <MudNavLink OnClick="@(() => DoNavigation((int)Enums.CaseState.Active))">
+                    Active Cases (@ActiveVulnerabilityCount)
+                </MudNavLink>
+                <MudNavLink OnClick="@(() => DoNavigation((int)Enums.CaseState.Inactive))">
+                    Inactive Cases (@InactiveVulnerabilityCount)
+                </MudNavLink>
+            </MudNavGroup>
+
+            <!-- 🔐 ADMIN SECTION (CanEdit) -->
+            <AuthorizeView Policy="@PermissionNames.CanAdmin">
+                <Authorized context="crmContext">
+                    <MudNavGroup Title="Admin" Expanded="false">
+                        <MudNavLink Href="preferredcontactmethods/index">Preferred Contact Methods</MudNavLink>
+                        <MudNavLink Href="sourcesofawareness/index">Sources Of Awareness</MudNavLink>
+                        <MudNavLink Href="specialrequirements/index">Special Requirements</MudNavLink>
+                        <MudNavLink Href="vulnerabilityreasons/index">Vulnerability Reasons</MudNavLink>
+                        <MudNavLink Href="vulnerabilitystatuses/index">Vulnerability Statuses</MudNavLink>
+                        <MudNavLink Href="auditrecords/search">Audit Search</MudNavLink>
+
+                        <!-- 🔐 USER MANAGEMENT (CanAdmin) -->
+                        <AuthorizeView Policy="@PermissionNames.CanAdmin">
+                            <Authorized context="userContext">
+                                <MudNavLink Href="users/index">Users</MudNavLink>
+                            </Authorized>
+                        </AuthorizeView>
+
+                        <MudNavLink Href="cdoutcomes/index">CD Outcomes</MudNavLink>
+                    </MudNavGroup>
+                </Authorized>
+            </AuthorizeView>
+
+            <!-- Saved pages -->
+            <MudNavGroup Title="My Vulnerable Client" Expanded="false">
+                <MudNavLink Href="savedpages/index">Saved Pages</MudNavLink>
+            </MudNavGroup>
+
+            <MudNavLink Href="/auth/logout" Icon="@Icons.Material.Filled.Logout">Logout</MudNavLink>
+
+        </MudNavMenu>
+    </Authorized>
+
+    <NotAuthorized>
+        <MudNavMenu>
+            <MudNavLink Href="/auth/login" Icon="@Icons.Material.Filled.Login">Login</MudNavLink>
+            <MudNavLink Href="/auth/register" Icon="@Icons.Material.Filled.AppRegistration">Register</MudNavLink>
+        </MudNavMenu>
+    </NotAuthorized>
+</AuthorizeView>

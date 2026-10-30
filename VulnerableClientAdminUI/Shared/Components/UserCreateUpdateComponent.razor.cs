@@ -4,7 +4,7 @@ public partial class UserCreateUpdateComponent
 {
     [Parameter] public UserDisplayModel UserDisplayModel { get; set; } = null!;
 
-    [Parameter] public List<string> Roles { get; set; } = [];
+    [Parameter] public List<string> Permissions { get; set; } = null!;
 
     [Parameter] public bool PreventEditing { get; set; }
 
