@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Server;
+using QuestPDF.Infrastructure;
 using VulnerableClientAdminUI.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -112,6 +113,9 @@ builder.Services.ConfigureSqlConnections(configuration);
 builder.Services.AddDependencies();
 
 var app = builder.Build();
+
+// Configure the QuestPDF license tier
+QuestPDF.Settings.License = LicenseType.Community;
 
 // -------------------------------
 // Seed Admin User + Claims
