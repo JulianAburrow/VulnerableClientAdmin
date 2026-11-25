@@ -3,30 +3,41 @@
 
 <PageTitle>Vulnerable Clients</PageTitle>
 
-@if (VulnerableClients is null)
-{
-    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Contacts</MudAlert>
-    return;
-}
+<AuthorizeView Policy="@PermissionNames.CanView">
+    <Authorized>
 
-<br />
+        @if (VulnerableClients is null)
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">Loading Contacts</MudAlert>
+            return;
+        }
 
-@if (VulnerableClients.Any(v => v.VulnerabilityInformation is null))
-{
-    <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">
-        <p>
-            The clients listed below have a status in the Contact table of 'Currently considered vulnerable' or 'Previously considered vulnerable'. However,
-            not every client so identified has had their vulnerability details recorded in this application. Where this is the case an
-            'Add Vulnerability Details' button will appear.
-        </p>
-    </MudAlert>
-    <br />
-}
+        <br />
 
-<span hidden="@(VulnerableClients is null || !VulnerableClients.Any())">
-    <button @onclick="ExportCSV" class="btn btn-success" hidden="@(VulnerableClients is null || !VulnerableClients.Any())">Download as CSV</button>
-    <br />
-    <br />
-</span>
+        @if (VulnerableClients.Any(v => v.VulnerabilityInformation is null))
+        {
+            <MudAlert Severity="Severity.Info" ContentAlignment="HorizontalAlignment.Center">
+                <p>
+                    The clients listed below have a status in the Contact table of 'Currently considered vulnerable' or 'Previously considered vulnerable'. However,
+                    not every client so identified has had their vulnerability details recorded in this application. Where this is the case an
+                    'Add Vulnerability Details' button will appear.
+                </p>
+            </MudAlert>
+            <br />
+        }
 
-<VulnerableClientListViewComponent Clients="@VulnerableClients" />
+        <span hidden="@(VulnerableClients is null || !VulnerableClients.Any())">
+            <button @onclick="ExportCSV" class="btn btn-success" hidden="@(VulnerableClients is null || !VulnerableClients.Any())">Download as CSV</button>
+            <br />
+            <br />
+        </span>
+
+        <VulnerableClientListViewComponent Clients="@VulnerableClients" />
+
+    </Authorized>
+    <NotAuthorized>
+
+        <NotAuthorizedComponent />
+
+    </NotAuthorized>
+</AuthorizeView>
