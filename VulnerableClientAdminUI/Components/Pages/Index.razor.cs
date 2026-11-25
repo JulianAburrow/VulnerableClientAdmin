@@ -4,8 +4,6 @@ namespace VulnerableClientAdminUI.Components.Pages;
 
 public partial class Index
 {
-    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-
     private List<VulnerabilityInformationModel> VulnerabilitiesForTodayOrEarlier { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
